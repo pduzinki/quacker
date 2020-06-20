@@ -6,10 +6,12 @@ import (
 // "quacker/views"
 )
 
+// QuackC is a controller struct responsible for handling quack resources
 type QuackC struct {
 	// HomeView *views.View
 }
 
+// NewQuackC creates new quack controller
 func NewQuackC() *QuackC {
 	qc := QuackC{
 		// HomeView: views.NewView("views/quack/home.gohtml"),

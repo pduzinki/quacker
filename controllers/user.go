@@ -6,12 +6,14 @@ import (
 	"quacker/views"
 )
 
+// UserC is a controller struct responsible for handling user resources
 type UserC struct {
 	HomepageView *views.View
 	LoginView    *views.View
 	SignupView   *views.View
 }
 
+// NewUserC creates new user controller
 func NewUserC() *UserC {
 	uc := UserC{
 		HomepageView: views.NewView("views/user/homepage.gohtml"),
@@ -27,22 +29,22 @@ func (uc *UserC) GetHomepage(w http.ResponseWriter, r *http.Request) {
 	uc.HomepageView.Render(w, r)
 }
 
-// Login handles GET /login
+// GetLogin handles GET /login
 func (uc *UserC) GetLogin(w http.ResponseWriter, r *http.Request) {
 	uc.LoginView.Render(w, r)
 }
 
-// LoginPost handles POST /login
+// PostLogin handles POST /login
 func (uc *UserC) PostLogin(w http.ResponseWriter, r *http.Request) {
 	// TODO
 }
 
-// Signup handles GET /signup
+// GetSignup handles GET /signup
 func (uc *UserC) GetSignup(w http.ResponseWriter, r *http.Request) {
 	uc.SignupView.Render(w, r)
 }
 
-// SignupPost handles POST /signup
+// PostSignup handles POST /signup
 func (uc *UserC) PostSignup(w http.ResponseWriter, r *http.Request) {
 	// TODO
 }

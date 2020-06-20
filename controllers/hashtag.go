@@ -6,10 +6,12 @@ import (
 // "quacker/views"
 )
 
+// HashtagC is a controller struct responsible for handling hashtag resource
 type HashtagC struct {
 	// HomeView *views.View
 }
 
+// NewHashtagC creates new hashtag controller
 func NewHashtagC() *HashtagC {
 	hc := HashtagC{
 		// HomeView: views.NewView("views/hashtag/home.gohtml"),
