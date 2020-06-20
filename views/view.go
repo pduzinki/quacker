@@ -9,7 +9,7 @@ import (
 
 type View struct {
 	Template *template.Template
-	Layout   string
+	// Layout   string
 }
 
 func NewView(file string) *View {
