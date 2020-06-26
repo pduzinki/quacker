@@ -19,7 +19,7 @@ func main() {
 	// hashtagC := controllers.NewHashtagC()
 	// quackC := controllers.NewQuackC()
 	us := models.NewUserService(connectionInfo)
-	userC := controllers.NewUserC(us)
+	userC := controllers.NewUserController(us)
 
 	r.HandleFunc("/", userC.GetHomepage)
 	r.HandleFunc("/login", userC.GetLogin).Methods("GET")
