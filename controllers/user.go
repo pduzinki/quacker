@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"quacker/models"
 	"quacker/views"
 )
 
@@ -11,14 +12,16 @@ type UserC struct {
 	HomepageView *views.View
 	LoginView    *views.View
 	SignupView   *views.View
+	us           models.UserService
 }
 
 // NewUserC creates new user controller
-func NewUserC() *UserC {
+func NewUserC(us models.UserService) *UserC {
 	uc := UserC{
 		HomepageView: views.NewView("views/user/homepage.gohtml"),
 		LoginView:    views.NewView("views/user/login.gohtml"),
 		SignupView:   views.NewView("views/user/signup.gohtml"),
+		us:           us,
 	}
 
 	return &uc

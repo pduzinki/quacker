@@ -1,19 +1,25 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
 	"quacker/controllers"
+	"quacker/models"
 )
 
 func main() {
 	r := mux.NewRouter()
 
+	connectionInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s "+
+		"sslmode=disable", "localhost", 5432, "postgres", "123", "quacker_dev")
+
 	// hashtagC := controllers.NewHashtagC()
 	// quackC := controllers.NewQuackC()
-	userC := controllers.NewUserC()
+	us := models.NewUserService(connectionInfo)
+	userC := controllers.NewUserC(us)
 
 	r.HandleFunc("/", userC.GetHomepage)
 	r.HandleFunc("/login", userC.GetLogin).Methods("GET")
