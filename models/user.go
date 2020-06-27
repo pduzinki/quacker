@@ -29,8 +29,8 @@ type userService struct {
 	db *gorm.DB
 }
 
-func NewUserService(connectionInfo string) UserService {
-	db, err := gorm.Open("postgres", connectionInfo)
+func NewUserService(dialect, connectionInfo string) UserService {
+	db, err := gorm.Open(dialect, connectionInfo)
 	if err != nil {
 		panic(err)
 	}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -11,23 +10,26 @@ import (
 )
 
 func main() {
-	r := mux.NewRouter()
+	// config
+	dbCfg := LoadDatabaseConfig()
 
-	connectionInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s "+
-		"sslmode=disable", "localhost", 5432, "postgres", "123", "quacker_dev")
+	// services
+	us := models.NewUserService(dbCfg.Dialect(), dbCfg.ConnectionInfo())
 
-	// hashtagC := controllers.NewHashtagC()
-	// quackC := controllers.NewQuackC()
-	us := models.NewUserService(connectionInfo)
+	// controllers
 	userC := controllers.NewUserController(us)
+	// TODO hashtagC := controllers.NewHashtagC()
+	// TODO quackC := controllers.NewQuackC()
 
+	// router
+	r := mux.NewRouter()
 	r.HandleFunc("/", userC.GetHomepage)
 	r.HandleFunc("/login", userC.GetLogin).Methods("GET")
 	r.HandleFunc("/login", userC.PostLogin).Methods("POST")
 	r.HandleFunc("/signup", userC.GetSignup).Methods("GET")
 	r.HandleFunc("/signup", userC.PostSignup).Methods("POST")
 
-	// TODOs
+	// TODO later
 	// /home
 	// /explore
 	// /{user:[a-zA-Z0-9_-]}
