@@ -14,10 +14,10 @@ func main() {
 	dbCfg := LoadDatabaseConfig()
 
 	// services
-	us := models.NewUserService(dbCfg.Dialect(), dbCfg.ConnectionInfo())
+	services := models.NewServices(dbCfg.Dialect(), dbCfg.ConnectionInfo())
 
 	// controllers
-	userC := controllers.NewUserController(us)
+	userC := controllers.NewUserController(services.Us)
 	// TODO hashtagC := controllers.NewHashtagC()
 	// TODO quackC := controllers.NewQuackC()
 
