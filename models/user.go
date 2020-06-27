@@ -29,12 +29,7 @@ type userService struct {
 	db *gorm.DB
 }
 
-func NewUserService(dialect, connectionInfo string) UserService {
-	db, err := gorm.Open(dialect, connectionInfo)
-	if err != nil {
-		panic(err)
-	}
-
+func NewUserService(db *gorm.DB) UserService {
 	return &userService{
 		db: db,
 	}

@@ -15,6 +15,11 @@ func main() {
 
 	// services
 	services := models.NewServices(dbCfg.Dialect(), dbCfg.ConnectionInfo())
+	defer services.Close()
+	err := services.AutoMigrate()
+	if err != nil {
+		panic(err)
+	}
 
 	// controllers
 	userC := controllers.NewUserController(services.Us)
