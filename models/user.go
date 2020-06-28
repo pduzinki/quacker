@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/postgres" // imports postgres driver
 )
 
 // User ...
@@ -29,6 +29,7 @@ type userService struct {
 	db *gorm.DB
 }
 
+// NewUserService creates UserService instance
 func NewUserService(db *gorm.DB) UserService {
 	return &userService{
 		db: db,

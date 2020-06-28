@@ -7,7 +7,7 @@ import (
 	"quacker/views"
 )
 
-// UserController is a controller struct responsible for handling user resources
+// UserController is responsible for handling user resources
 type UserController struct {
 	HomepageView *views.View
 	LoginView    *views.View
@@ -15,7 +15,7 @@ type UserController struct {
 	us           models.UserService
 }
 
-// NewUserController creates new user controller
+// NewUserController creates user controller instance
 func NewUserController(us models.UserService) *UserController {
 	uc := UserController{
 		HomepageView: views.NewView("views/user/homepage.gohtml"),
