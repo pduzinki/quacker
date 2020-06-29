@@ -1,11 +1,13 @@
 package models
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" // imports postgres driver
 )
 
-// User ...
+// User represents user data in the database
 type User struct {
 	gorm.Model
 	Username          string `gorm:"not null;unique_index"`
@@ -16,22 +18,55 @@ type User struct {
 	RememberTokenHash string `gorm:"not null;unique_index"`
 }
 
-// UserDB ...
+// UserDB is an interface for interacting with user data in the database
 type UserDB interface {
+	Create(user *User) error
+	Update(user *User) error
+	Delete(id uint) error
 }
 
-// UserService ...
+// UserService is an interface for interacting with user model
 type UserService interface {
 	UserDB
 }
 
 type userService struct {
-	db *gorm.DB
+	UserDB
 }
 
 // NewUserService creates UserService instance
 func NewUserService(db *gorm.DB) UserService {
-	return &userService{
+	ug := userGorm{
 		db: db,
 	}
+
+	uv := userValidator{
+		&ug,
+	}
+
+	return &userService{
+		&uv,
+	}
+}
+
+type userValidator struct {
+	UserDB
+}
+
+type userGorm struct {
+	db *gorm.DB
+}
+
+func (ug *userGorm) Create(user *User) error {
+	fmt.Println("hello there, from userGorm.Create()")
+
+	return nil
+}
+
+func (ug *userGorm) Update(user *User) error {
+	return nil
+}
+
+func (ug *userGorm) Delete(id uint) error {
+	return nil
 }

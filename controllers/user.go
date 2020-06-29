@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	// "fmt"
 	"net/http"
 
 	"quacker/models"
@@ -53,6 +54,13 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(r, &form)
 	if err != nil {
+		http.Error(w, "Something went wrong.", http.StatusInternalServerError)
 		return
 	}
+
+	user := models.User{}
+
+	uc.us.Create(&user)
+
+	// fmt.Print(form)
 }
