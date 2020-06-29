@@ -49,5 +49,10 @@ func (uc *UserController) GetSignup(w http.ResponseWriter, r *http.Request) {
 
 // PostSignup handles POST /signup
 func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	var form signupForm
+
+	err := parseForm(r, &form)
+	if err != nil {
+		return
+	}
 }
