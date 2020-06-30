@@ -80,5 +80,6 @@ func (ug *userGorm) Update(user *User) error {
 }
 
 func (ug *userGorm) Delete(id uint) error {
-	return nil
+	user := User{Model: gorm.Model{ID: id}}
+	return ug.db.Delete(&user).Error
 }
