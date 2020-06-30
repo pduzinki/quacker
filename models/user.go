@@ -53,18 +53,30 @@ type userValidator struct {
 	UserDB
 }
 
+func (uv *userValidator) Create(user *User) error {
+	fmt.Println("hello there, from userValidator.Create()")
+
+	return uv.UserDB.Create(user)
+}
+
+func (uv *userValidator) Update(user *User) error {
+	return nil
+}
+
+func (uv *userValidator) Delete(id uint) error {
+	return nil
+}
+
 type userGorm struct {
 	db *gorm.DB
 }
 
 func (ug *userGorm) Create(user *User) error {
-	fmt.Println("hello there, from userGorm.Create()")
-
-	return nil
+	return ug.db.Create(user).Error
 }
 
 func (ug *userGorm) Update(user *User) error {
-	return nil
+	return ug.db.Save(user).Error
 }
 
 func (ug *userGorm) Delete(id uint) error {

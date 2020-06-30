@@ -58,7 +58,11 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := models.User{}
+	user := models.User{
+		Username: form.Username,
+		Email:    form.Email,
+		Password: form.Password,
+	}
 
 	uc.us.Create(&user)
 
