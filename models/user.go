@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" // imports postgres driver
 )
@@ -54,17 +52,21 @@ type userValidator struct {
 }
 
 func (uv *userValidator) Create(user *User) error {
-	fmt.Println("hello there, from userValidator.Create()")
+	// TODO
 
 	return uv.UserDB.Create(user)
 }
 
 func (uv *userValidator) Update(user *User) error {
-	return nil
+	// TODO
+
+	return uv.UserDB.Update(user)
 }
 
 func (uv *userValidator) Delete(id uint) error {
-	return nil
+	// TODO
+
+	return uv.UserDB.Delete(id)
 }
 
 type userGorm struct {

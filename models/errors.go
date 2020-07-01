@@ -1,3 +1,7 @@
 package models
 
-// TODO
+import "errors"
+
+var (
+	errInvalidID = errors.New("model: Invalid ID")
+)
