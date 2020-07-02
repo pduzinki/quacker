@@ -64,7 +64,11 @@ func (uv *userValidator) Update(user *User) error {
 }
 
 func (uv *userValidator) Delete(id uint) error {
-	// TODO
+	user := User{Model: gorm.Model{ID: id}}
+	err := runUserValidatorFuncs(&user, uv.idGreaterThanZero)
+	if err != nil {
+		return err
+	}
 
 	return uv.UserDB.Delete(id)
 }
