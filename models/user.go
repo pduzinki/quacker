@@ -1,6 +1,8 @@
 package models
 
 import (
+	"regexp"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" // imports postgres driver
 )
@@ -34,25 +36,31 @@ type userService struct {
 
 // NewUserService creates UserService instance
 func NewUserService(db *gorm.DB) UserService {
-	ug := userGorm{
-		db: db,
-	}
-
-	uv := userValidator{
-		&ug,
-	}
+	ug := newUserGorm(db)
+	uv := newUserValidator(ug)
 
 	return &userService{
-		&uv,
+		uv,
 	}
 }
 
 type userValidator struct {
 	UserDB
+	EmailRegex *regexp.Regexp
+}
+
+func newUserValidator(u UserDB) *userValidator {
+	return &userValidator{
+		UserDB:     u,
+		EmailRegex: regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
+	}
 }
 
 func (uv *userValidator) Create(user *User) error {
-	// TODO
+	err := runUserValidatorFuncs(user)
+	if err != nil {
+		return err
+	}
 
 	return uv.UserDB.Create(user)
 }
@@ -75,6 +83,12 @@ func (uv *userValidator) Delete(id uint) error {
 
 type userGorm struct {
 	db *gorm.DB
+}
+
+func newUserGorm(db *gorm.DB) *userGorm {
+	return &userGorm{
+		db: db,
+	}
 }
 
 func (ug *userGorm) Create(user *User) error {
