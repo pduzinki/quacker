@@ -105,13 +105,28 @@ func newUserGorm(db *gorm.DB) *userGorm {
 }
 
 func (ug *userGorm) FindByUsername(username string) (*User, error) {
-	// TODO
-	return nil, nil
+	u := User{}
+	err := ug.db.Where("username = ?", username).First(&u).Error
+
+	if err == gorm.ErrRecordNotFound {
+		return nil, errRecordNotFound
+	} else if err != nil {
+		return nil, err
+	}
+
+	return &u, nil
 }
 
 func (ug *userGorm) FindByEmail(email string) (*User, error) {
-	// TODO
-	return nil, nil
+	u := User{}
+	err := ug.db.Where("email = ?", email).First(&u).Error
+
+	if err == gorm.ErrRecordNotFound {
+		return nil, errRecordNotFound
+	} else if err != nil {
+		return nil, err
+	}
+	return &u, nil
 }
 
 func (ug *userGorm) Create(user *User) error {
