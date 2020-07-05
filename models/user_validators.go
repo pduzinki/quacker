@@ -2,6 +2,8 @@ package models
 
 import (
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userValidatorFunc func(*User) error
@@ -49,5 +51,24 @@ func (uv *userValidator) passwordRequire(user *User) error {
 }
 
 func (uv *userValidator) passwordHashRequire(user *User) error {
+	if user.PasswordHash == "" {
+		return errPasswordHashRequired
+	}
+	return nil
+}
+
+func passwordEncrypt(user *User) error {
+	if user.Password == "" {
+		return errPasswordRequired
+	}
+
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	user.PasswordHash = string(hashedBytes)
+	user.Password = ""
+
 	return nil
 }
