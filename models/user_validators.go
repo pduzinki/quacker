@@ -42,6 +42,9 @@ func (uv *userValidator) emailCheckFormat(user *User) error {
 }
 
 func (uv *userValidator) passwordRequire(user *User) error {
+	if user.Password == "" {
+		return errPasswordRequired
+	}
 	return nil
 }
 
