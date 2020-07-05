@@ -20,6 +20,9 @@ type User struct {
 
 // UserDB is an interface for interacting with user data in the database
 type UserDB interface {
+	FindByUsername(username string) (*User, error)
+	FindByEmail(email string) (*User, error)
+
 	Create(user *User) error
 	Update(user *User) error
 	Delete(id uint) error
@@ -56,6 +59,16 @@ func newUserValidator(u UserDB) *userValidator {
 	}
 }
 
+func (uv *userValidator) FindByUsername(username string) (*User, error) {
+	// TODO
+	return nil, nil
+}
+
+func (uv *userValidator) FindByEmail(email string) (*User, error) {
+	// TODO
+	return nil, nil
+}
+
 func (uv *userValidator) Create(user *User) error {
 	err := runUserValidatorFuncs(user)
 	if err != nil {
@@ -89,6 +102,16 @@ func newUserGorm(db *gorm.DB) *userGorm {
 	return &userGorm{
 		db: db,
 	}
+}
+
+func (ug *userGorm) FindByUsername(username string) (*User, error) {
+	// TODO
+	return nil, nil
+}
+
+func (ug *userGorm) FindByEmail(email string) (*User, error) {
+	// TODO
+	return nil, nil
 }
 
 func (ug *userGorm) Create(user *User) error {

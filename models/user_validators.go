@@ -25,6 +25,11 @@ func (uv *userValidator) idGreaterThanZero(user *User) error {
 	return nil
 }
 
+func (uv *userValidator) usernameUnique(user *User) error {
+	// TODO
+	return nil
+}
+
 func (uv *userValidator) emailNormalize(user *User) error {
 	user.Email = strings.ToLower(user.Email)
 	user.Email = strings.TrimSpace(user.Email)
@@ -39,7 +44,12 @@ func (uv *userValidator) emailRequire(user *User) error {
 }
 
 func (uv *userValidator) emailCheckFormat(user *User) error {
+	// TODO
+	return nil
+}
 
+func (uv *userValidator) emailIsUnique(user *User) error {
+	// TODO
 	return nil
 }
 
