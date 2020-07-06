@@ -25,8 +25,24 @@ func (uv *userValidator) idGreaterThanZero(user *User) error {
 	return nil
 }
 
-func (uv *userValidator) usernameUnique(user *User) error {
-	// TODO
+func (uv *userValidator) usernameNormalize(user *User) error {
+	user.Username = strings.ToLower(user.Username)
+	user.Username = strings.TrimSpace(user.Username)
+	return nil
+}
+
+func (uv *userValidator) usernameIsAvailable(user *User) error {
+	existingUser, err := uv.FindByUsername(user.Username)
+	if err == errRecordNotFound {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if existingUser.ID != user.ID {
+		return errUsernameTaken
+	}
+
 	return nil
 }
 
@@ -48,7 +64,7 @@ func (uv *userValidator) emailCheckFormat(user *User) error {
 	return nil
 }
 
-func (uv *userValidator) emailIsUnique(user *User) error {
+func (uv *userValidator) emailIsAvailable(user *User) error {
 	// TODO
 	return nil
 }
