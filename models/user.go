@@ -76,7 +76,13 @@ func (uv *userValidator) FindByEmail(email string) (*User, error) {
 }
 
 func (uv *userValidator) Create(user *User) error {
-	err := runUserValidatorFuncs(user)
+	err := runUserValidatorFuncs(user,
+		uv.usernameNormalize,
+		uv.usernameIsAvailable,
+		uv.emailRequire,
+		uv.emailNormalize,
+		uv.emailIsAvailable,
+	)
 	if err != nil {
 		return err
 	}
