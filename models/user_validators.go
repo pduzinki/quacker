@@ -74,7 +74,17 @@ func (uv *userValidator) emailCheckFormat(user *User) error {
 }
 
 func (uv *userValidator) emailIsAvailable(user *User) error {
-	// TODO
+	existingUser, err := uv.FindByEmail(user.Email)
+	if err == errRecordNotFound {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if existingUser.ID != user.ID {
+		return errUsernameTaken
+	}
+
 	return nil
 }
 
