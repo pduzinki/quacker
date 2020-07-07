@@ -25,6 +25,13 @@ func (uv *userValidator) idGreaterThanZero(user *User) error {
 	return nil
 }
 
+func (uv *userValidator) usernameRequire(user *User) error {
+	if user.Username == "" {
+		return errUsernameRequired
+	}
+	return nil
+}
+
 func (uv *userValidator) usernameNormalize(user *User) error {
 	user.Username = strings.ToLower(user.Username)
 	user.Username = strings.TrimSpace(user.Username)
@@ -60,7 +67,9 @@ func (uv *userValidator) emailRequire(user *User) error {
 }
 
 func (uv *userValidator) emailCheckFormat(user *User) error {
-	// TODO
+	if !uv.EmailRegex.MatchString(user.Email) {
+		return errEmailInvalidFormat
+	}
 	return nil
 }
 

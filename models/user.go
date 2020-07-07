@@ -81,6 +81,7 @@ func (uv *userValidator) Create(user *User) error {
 		uv.usernameIsAvailable,
 		uv.emailRequire,
 		uv.emailNormalize,
+		uv.emailCheckFormat,
 		uv.emailIsAvailable,
 	)
 	if err != nil {
