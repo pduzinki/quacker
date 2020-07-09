@@ -30,12 +30,12 @@ func NewUserController(us models.UserService) *UserController {
 
 // GetHomepage handles GET /
 func (uc *UserController) GetHomepage(w http.ResponseWriter, r *http.Request) {
-	uc.HomepageView.Render(w, r)
+	uc.HomepageView.Render(w, r, nil)
 }
 
 // GetLogin handles GET /login
 func (uc *UserController) GetLogin(w http.ResponseWriter, r *http.Request) {
-	uc.LoginView.Render(w, r)
+	uc.LoginView.Render(w, r, nil)
 }
 
 // PostLogin handles POST /login
@@ -45,7 +45,7 @@ func (uc *UserController) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 // GetSignup handles GET /signup
 func (uc *UserController) GetSignup(w http.ResponseWriter, r *http.Request) {
-	uc.SignupView.Render(w, r)
+	uc.SignupView.Render(w, r, nil)
 }
 
 // PostSignup handles POST /signup
@@ -64,7 +64,10 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 		Password: form.Password,
 	}
 
-	uc.us.Create(&user)
+	err = uc.us.Create(&user)
+	if err != nil {
+
+	}
 
 	// fmt.Print(form)
 }

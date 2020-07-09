@@ -95,6 +95,10 @@ func (uv *userValidator) passwordRequire(user *User) error {
 	return nil
 }
 
+func (uv *userValidator) passwordEncrypt(user *User) error {
+	return nil
+}
+
 func (uv *userValidator) passwordHashRequire(user *User) error {
 	if user.PasswordHash == "" {
 		return errPasswordHashRequired

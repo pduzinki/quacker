@@ -28,7 +28,7 @@ func NewView(file string) *View {
 }
 
 // Render prepares an http response to render a page
-func (v *View) Render(w http.ResponseWriter, r *http.Request) {
+func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) {
 	w.Header().Set("Content-Type", "text/html")
 
 	var buf bytes.Buffer
