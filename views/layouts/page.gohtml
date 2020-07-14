@@ -10,8 +10,13 @@
   </head>
 
   <body>
-    {{template "navbar"}}
-    {{template "yield"}}
+    <div class="container-fluid">
+      {{template "navbar"}}
+      {{if .Alert}}
+        {{template "alert" .Alert}}
+      {{end}}
+      {{template "yield"}}
+    </div>
     
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
