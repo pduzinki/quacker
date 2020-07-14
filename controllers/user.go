@@ -51,10 +51,12 @@ func (uc *UserController) GetSignup(w http.ResponseWriter, r *http.Request) {
 // PostSignup handles POST /signup
 func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 	var form signupForm
+	var d views.Data
 
 	err := parseForm(r, &form)
 	if err != nil {
-		http.Error(w, "Something went wrong.", http.StatusInternalServerError)
+		d.SetAlert(err)
+		uc.SignupView.Render(w, r, d)
 		return
 	}
 
@@ -66,8 +68,9 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 
 	err = uc.us.Create(&user)
 	if err != nil {
-
+		d.SetAlert(err)
+		uc.SignupView.Render(w, r, d)
 	}
 
-	// fmt.Print(form)
+	http.Redirect(w, r, "/", http.StatusFound) // TODO redirect to somewhere proper
 }

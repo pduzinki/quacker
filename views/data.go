@@ -1,7 +1,5 @@
 package views
 
-import "net/http"
-
 type Alert struct {
 	Level   string
 	Message string
