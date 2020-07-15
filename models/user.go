@@ -10,12 +10,12 @@ import (
 // User represents user data in the database
 type User struct {
 	gorm.Model
-	Username          string `gorm:"not null;unique_index"`
-	Email             string `gorm:"not null;unique_index"`
-	Password          string `gorm:"-"`
-	PasswordHash      string `gorm:"not null"`
-	RememberToken     string `gorm:"-"`
-	RememberTokenHash string `gorm:"not null;unique_index"`
+	Username     string `gorm:"not null;unique_index"`
+	Email        string `gorm:"not null;unique_index"`
+	Password     string `gorm:"-"`
+	PasswordHash string `gorm:"not null"`
+	// RememberToken     string `gorm:"-"`
+	// RememberTokenHash string `gorm:"not null;unique_index"`
 }
 
 // UserDB is an interface for interacting with user data in the database

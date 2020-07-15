@@ -20,6 +20,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	// services.RebuildDatabase()
 
 	// controllers
 	userC := controllers.NewUserController(services.Us)
