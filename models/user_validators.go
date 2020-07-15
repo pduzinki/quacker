@@ -38,6 +38,13 @@ func (uv *userValidator) usernameNormalize(user *User) error {
 	return nil
 }
 
+func (uv *userValidator) usernameCheckFormat(user *User) error {
+	if !uv.UsernameRegex.MatchString(user.Username) {
+		return errUsernameInvalidFormat
+	}
+	return nil
+}
+
 func (uv *userValidator) usernameIsAvailable(user *User) error {
 	existingUser, err := uv.FindByUsername(user.Username)
 	if err == errRecordNotFound {
@@ -82,7 +89,7 @@ func (uv *userValidator) emailIsAvailable(user *User) error {
 		return err
 	}
 	if existingUser.ID != user.ID {
-		return errUsernameTaken
+		return errEmailTaken
 	}
 
 	return nil

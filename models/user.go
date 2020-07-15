@@ -49,13 +49,15 @@ func NewUserService(db *gorm.DB) UserService {
 
 type userValidator struct {
 	UserDB
-	EmailRegex *regexp.Regexp
+	EmailRegex    *regexp.Regexp
+	UsernameRegex *regexp.Regexp
 }
 
 func newUserValidator(u UserDB) *userValidator {
 	return &userValidator{
-		UserDB:     u,
-		EmailRegex: regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
+		UserDB:        u,
+		EmailRegex:    regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
+		UsernameRegex: regexp.MustCompile(`^[a-zA-Z0-9_-]+`),
 	}
 }
 
@@ -85,6 +87,7 @@ func (uv *userValidator) Create(user *User) error {
 	err := runUserValidatorFuncs(user,
 		uv.usernameRequire,
 		uv.usernameNormalize,
+		uv.usernameCheckFormat,
 		uv.usernameIsAvailable,
 		uv.emailRequire,
 		uv.emailNormalize,
