@@ -103,17 +103,6 @@ func (uv *userValidator) passwordRequire(user *User) error {
 }
 
 func (uv *userValidator) passwordEncrypt(user *User) error {
-	return nil
-}
-
-func (uv *userValidator) passwordHashRequire(user *User) error {
-	if user.PasswordHash == "" {
-		return errPasswordHashRequired
-	}
-	return nil
-}
-
-func passwordEncrypt(user *User) error {
 	if user.Password == "" {
 		return errPasswordRequired
 	}
@@ -126,5 +115,12 @@ func passwordEncrypt(user *User) error {
 	user.PasswordHash = string(hashedBytes)
 	user.Password = ""
 
+	return nil
+}
+
+func (uv *userValidator) passwordHashRequire(user *User) error {
+	if user.PasswordHash == "" {
+		return errPasswordHashRequired
+	}
 	return nil
 }

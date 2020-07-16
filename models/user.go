@@ -94,6 +94,8 @@ func (uv *userValidator) Create(user *User) error {
 		uv.emailCheckFormat,
 		uv.emailIsAvailable,
 		uv.passwordRequire,
+		uv.passwordEncrypt,
+		uv.passwordHashRequire,
 	)
 	if err != nil {
 		return err
