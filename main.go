@@ -11,10 +11,11 @@ import (
 
 func main() {
 	// config
-	dbCfg := LoadDatabaseConfig()
+	cfg := LoadConfig()
+	dbCfg := cfg.DbConfig
 
 	// services
-	services := models.NewServices(dbCfg.Dialect(), dbCfg.ConnectionInfo())
+	services := models.NewServices(dbCfg.Dialect(), dbCfg.ConnectionInfo(), cfg.PasswordPepper)
 	defer services.Close()
 	err := services.AutoMigrate()
 	if err != nil {

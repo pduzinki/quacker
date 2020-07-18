@@ -107,7 +107,8 @@ func (uv *userValidator) passwordEncrypt(user *User) error {
 		return errPasswordRequired
 	}
 
-	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcrypt.DefaultCost)
+	passwordBytes := user.Password + uv.PasswordPepper
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(passwordBytes), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}

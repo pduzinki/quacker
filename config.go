@@ -2,19 +2,28 @@ package main
 
 import "fmt"
 
+// Config contains data necessary for app configuration
+type Config struct {
+	DbConfig       DatabaseConfig
+	PasswordPepper string
+}
+
 // DatabaseConfig contains data necessary for database configuration
 type DatabaseConfig struct {
 	dialect        string
 	connectionInfo string
 }
 
-// LoadDatabaseConfig loads and returns DatabaseConfig instance
-func LoadDatabaseConfig() *DatabaseConfig {
+// LoadConfig loads and returns Config instance
+func LoadConfig() *Config {
 	// TODO add reading config from file
-	return &DatabaseConfig{
-		dialect: "postgres",
-		connectionInfo: fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s "+
-			"sslmode=disable", "localhost", 5432, "postgres", "123", "quacker_dev"),
+	return &Config{
+		DbConfig: DatabaseConfig{
+			dialect: "postgres",
+			connectionInfo: fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s "+
+				"sslmode=disable", "localhost", 5432, "postgres", "123", "quacker_dev"),
+		},
+		PasswordPepper: "not-a-secret-pepper",
 	}
 }
 
