@@ -17,11 +17,11 @@ func main() {
 	// services
 	services := models.NewServices(dbCfg.Dialect(), dbCfg.ConnectionInfo(), cfg.PasswordPepper)
 	defer services.Close()
+	services.RebuildDatabase()
 	err := services.AutoMigrate()
 	if err != nil {
 		panic(err)
 	}
-	// services.RebuildDatabase()
 
 	// controllers
 	userC := controllers.NewUserController(services.Us)

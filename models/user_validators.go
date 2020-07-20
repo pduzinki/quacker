@@ -102,7 +102,7 @@ func (uv *userValidator) passwordRequire(user *User) error {
 	return nil
 }
 
-func (uv *userValidator) passwordEncrypt(user *User) error {
+func (uv *userValidator) passwordHashCreate(user *User) error {
 	if user.Password == "" {
 		return errPasswordRequired
 	}
@@ -123,5 +123,17 @@ func (uv *userValidator) passwordHashRequire(user *User) error {
 	if user.PasswordHash == "" {
 		return errPasswordHashRequired
 	}
+	return nil
+}
+
+func (uv *userValidator) rememberTokenCreate(user *User) error {
+	return nil
+}
+
+func (uv *userValidator) rememberTokenHashCreate(user *User) error {
+	return nil
+}
+
+func (uv *userValidator) rememberTokenHashRequire(user *User) error {
 	return nil
 }
