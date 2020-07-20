@@ -6,6 +6,7 @@ import "fmt"
 type Config struct {
 	DbConfig       DatabaseConfig
 	PasswordPepper string
+	HmacKey        string
 }
 
 // DatabaseConfig contains data necessary for database configuration
@@ -24,6 +25,7 @@ func LoadConfig() *Config {
 				"sslmode=disable", "localhost", 5432, "postgres", "123", "quacker_dev"),
 		},
 		PasswordPepper: "not-a-secret-pepper",
+		HmacKey:        "not-a-random-hmac-key",
 	}
 }
 
