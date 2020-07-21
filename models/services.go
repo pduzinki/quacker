@@ -12,7 +12,7 @@ type Services struct {
 }
 
 // NewServices creates Services instance
-func NewServices(dialect, connectionInfo, passwordPepper string) *Services {
+func NewServices(dialect, connectionInfo, passwordPepper, hmacKey string) *Services {
 	db, err := gorm.Open(dialect, connectionInfo)
 	if err != nil {
 		panic(err)
@@ -21,7 +21,7 @@ func NewServices(dialect, connectionInfo, passwordPepper string) *Services {
 
 	return &Services{
 		db: db,
-		Us: NewUserService(db, passwordPepper),
+		Us: NewUserService(db, passwordPepper, hmacKey),
 	}
 }
 

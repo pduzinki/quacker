@@ -38,9 +38,9 @@ type userService struct {
 }
 
 // NewUserService creates UserService instance
-func NewUserService(db *gorm.DB, passwordPepper string) UserService {
+func NewUserService(db *gorm.DB, passwordPepper, hmacKey string) UserService {
 	ug := newUserGorm(db)
-	uv := newUserValidator(ug, passwordPepper)
+	uv := newUserValidator(ug, passwordPepper, hmacKey)
 
 	return &userService{
 		uv,
@@ -54,7 +54,9 @@ type userValidator struct {
 	PasswordPepper string
 }
 
-func newUserValidator(u UserDB, passwordPepper string) *userValidator {
+func newUserValidator(u UserDB, passwordPepper, hmacKey string) *userValidator {
+	// TODO add hmac object
+
 	return &userValidator{
 		UserDB:         u,
 		EmailRegex:     regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),

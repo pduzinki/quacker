@@ -15,9 +15,10 @@ func main() {
 	dbCfg := cfg.DbConfig
 
 	// services
-	services := models.NewServices(dbCfg.Dialect(), dbCfg.ConnectionInfo(), cfg.PasswordPepper)
+	services := models.NewServices(dbCfg.Dialect(), dbCfg.ConnectionInfo(),
+		cfg.PasswordPepper, cfg.HmacKey)
 	defer services.Close()
-	services.RebuildDatabase()
+	// services.RebuildDatabase()
 	err := services.AutoMigrate()
 	if err != nil {
 		panic(err)
