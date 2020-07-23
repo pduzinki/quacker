@@ -4,6 +4,8 @@ import (
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
+
+	"quacker/token"
 )
 
 type userValidatorFunc func(*User) error
@@ -127,13 +129,28 @@ func (uv *userValidator) passwordHashRequire(user *User) error {
 }
 
 func (uv *userValidator) rememberTokenCreate(user *User) error {
+	token, err := token.GenerateRememberToken()
+	if err != nil {
+		return err
+	}
+
+	user.RememberToken = token
 	return nil
 }
 
 func (uv *userValidator) rememberTokenHashCreate(user *User) error {
+	if user.RememberToken == "" {
+		return nil
+	}
+
+	tokenHash := uv.Hmac.Hash(user.RememberToken)
+	user.RememberTokenHash = tokenHash
 	return nil
 }
 
 func (uv *userValidator) rememberTokenHashRequire(user *User) error {
+	if user.RememberTokenHash == "" {
+		return errRememberTokenHashRequired
+	}
 	return nil
 }
