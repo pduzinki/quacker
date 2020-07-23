@@ -5,6 +5,8 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" // imports postgres driver
+
+	"quacker/hash"
 )
 
 // User represents user data in the database
@@ -52,6 +54,7 @@ type userValidator struct {
 	EmailRegex     *regexp.Regexp
 	UsernameRegex  *regexp.Regexp
 	PasswordPepper string
+	Hmac           hash.Hmac
 }
 
 func newUserValidator(u UserDB, passwordPepper, hmacKey string) *userValidator {
@@ -62,6 +65,7 @@ func newUserValidator(u UserDB, passwordPepper, hmacKey string) *userValidator {
 		EmailRegex:     regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
 		UsernameRegex:  regexp.MustCompile(`^[a-zA-Z0-9_-]+`),
 		PasswordPepper: passwordPepper,
+		Hmac:           hash.NewHmac(hmacKey),
 	}
 }
 
