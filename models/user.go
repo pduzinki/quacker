@@ -116,7 +116,23 @@ func (uv *userValidator) Create(user *User) error {
 }
 
 func (uv *userValidator) Update(user *User) error {
-	// TODO
+	err := runUserValidatorFuncs(user,
+		uv.usernameRequire,
+		uv.usernameNormalize,
+		uv.usernameCheckFormat,
+		uv.usernameIsAvailable,
+		uv.emailRequire,
+		uv.emailNormalize,
+		uv.emailCheckFormat,
+		uv.emailIsAvailable,
+		uv.passwordHashCreate,
+		uv.passwordHashRequire,
+		uv.rememberTokenHashCreate,
+		uv.rememberTokenHashRequire,
+	)
+	if err != nil {
+		return err
+	}
 
 	return uv.UserDB.Update(user)
 }
