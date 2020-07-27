@@ -106,7 +106,7 @@ func (uv *userValidator) passwordRequire(user *User) error {
 
 func (uv *userValidator) passwordHashCreate(user *User) error {
 	if user.Password == "" {
-		return errPasswordRequired
+		return nil // no new password given, do nothing
 	}
 
 	passwordBytes := user.Password + uv.PasswordPepper
@@ -140,7 +140,7 @@ func (uv *userValidator) rememberTokenCreate(user *User) error {
 
 func (uv *userValidator) rememberTokenHashCreate(user *User) error {
 	if user.RememberToken == "" {
-		return nil
+		return nil // no new token created, do nothing
 	}
 
 	tokenHash := uv.Hmac.Hash(user.RememberToken)
