@@ -24,6 +24,7 @@ type User struct {
 type UserDB interface {
 	FindByUsername(username string) (*User, error)
 	FindByEmail(email string) (*User, error)
+	FindByRememberToken(token string) (*User, error)
 
 	Create(user *User) error
 	Update(user *User) error
@@ -89,6 +90,19 @@ func (uv *userValidator) FindByEmail(email string) (*User, error) {
 	}
 
 	return uv.UserDB.FindByEmail(email)
+}
+
+func (uv *userValidator) FindByRememberToken(token string) (*User, error) {
+	u := User{}
+	u.RememberToken = token
+	err := runUserValidatorFuncs(&u,
+		uv.rememberTokenHashCreate,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return uv.UserDB.FindByRememberToken(u.RememberTokenHash)
 }
 
 func (uv *userValidator) Create(user *User) error {
@@ -173,6 +187,18 @@ func (ug *userGorm) FindByUsername(username string) (*User, error) {
 func (ug *userGorm) FindByEmail(email string) (*User, error) {
 	u := User{}
 	err := ug.db.Where("email = ?", email).First(&u).Error
+
+	if err == gorm.ErrRecordNotFound {
+		return nil, errRecordNotFound
+	} else if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
+func (ug *userGorm) FindByRememberToken(token string) (*User, error) {
+	u := User{}
+	err := ug.db.Where("remember_token_hash = ?", token).First(&u).Error
 
 	if err == gorm.ErrRecordNotFound {
 		return nil, errRecordNotFound
