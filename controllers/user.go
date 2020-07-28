@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"quacker/models"
+	"quacker/token"
 	"quacker/views"
 )
 
@@ -72,5 +73,36 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 		uc.SignupView.Render(w, r, d)
 	}
 
-	http.Redirect(w, r, "/", http.StatusFound) // TODO redirect to somewhere proper
+	err = uc.signIn(w, &user)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+
+	// TODO redirect to /<username>
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+// signIn creates a cookie with remember token for the given user
+func (uc *UserController) signIn(w http.ResponseWriter, u *models.User) error {
+	if u.RememberToken == "" {
+		token, err := token.GenerateRememberToken()
+		if err != nil {
+			return err
+		}
+		u.RememberToken = token
+		err = uc.us.Update(u)
+		if err != nil {
+			return err
+		}
+	}
+
+	cookie := http.Cookie{
+		Name:     "remember_token",
+		Value:    u.RememberToken,
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, &cookie)
+	return nil
 }
