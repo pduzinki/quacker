@@ -14,6 +14,7 @@ type UserController struct {
 	HomepageView *views.View
 	LoginView    *views.View
 	SignupView   *views.View
+	UsernameView *views.View
 	us           models.UserService
 }
 
@@ -23,6 +24,7 @@ func NewUserController(us models.UserService) *UserController {
 		HomepageView: views.NewView("views/user/homepage.gohtml"),
 		LoginView:    views.NewView("views/user/login.gohtml"),
 		SignupView:   views.NewView("views/user/signup.gohtml"),
+		UsernameView: views.NewView("views/user/user.gohtml"),
 		us:           us,
 	}
 
@@ -105,4 +107,9 @@ func (uc *UserController) signIn(w http.ResponseWriter, u *models.User) error {
 
 	http.SetCookie(w, &cookie)
 	return nil
+}
+
+// GetUser handles GET /{username}
+func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
+	uc.UsernameView.Render(w, r, nil)
 }
