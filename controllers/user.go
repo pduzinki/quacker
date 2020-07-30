@@ -4,6 +4,8 @@ import (
 	// "fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
+
 	"quacker/models"
 	"quacker/token"
 	"quacker/views"
@@ -111,5 +113,28 @@ func (uc *UserController) signIn(w http.ResponseWriter, u *models.User) error {
 
 // GetUser handles GET /{username}
 func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
-	uc.UsernameView.Render(w, r, nil)
+	// read username from the url
+	params := mux.Vars(r)
+
+	username, prs := params["user"]
+	if prs == false {
+		// TODO add some logging
+	}
+
+	// check if user with such an username exists, get user
+	user, err := uc.us.FindByUsername(username)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
+	_ = user
+
+	// fill data for template
+	// render page
+
+	var d views.Data
+	d.User = "obi-wan kenobi"
+
+	uc.UsernameView.Render(w, r, d)
 }

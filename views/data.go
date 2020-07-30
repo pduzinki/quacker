@@ -9,6 +9,7 @@ type Alert struct {
 type Data struct {
 	Alert *Alert
 	Yield interface{}
+	User  string
 }
 
 // SetAlert sets value of an alert
