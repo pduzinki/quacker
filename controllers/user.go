@@ -114,6 +114,7 @@ func (uc *UserController) signIn(w http.ResponseWriter, u *models.User) error {
 // GetUser handles GET /{username}
 func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 	// read username from the url
+	var vd views.Data
 	params := mux.Vars(r)
 
 	username, prs := params["user"]
@@ -123,18 +124,19 @@ func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	// check if user with such an username exists, get user
 	user, err := uc.us.FindByUsername(username)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusFound)
-		return
+	if err == models.ErrRecordNotFound {
+		// create default user to be returned
+		user = &models.User{
+			Username: username,
+			About:    "user doesn't exist.",
+		}
+	} else if err != nil {
+		vd.SetAlert(err)
 	}
 
-	_ = user
-
 	// fill data for template
+	vd.SetUser(user)
+
 	// render page
-
-	var d views.Data
-	d.User = "obi-wan kenobi"
-
-	uc.UsernameView.Render(w, r, d)
+	uc.UsernameView.Render(w, r, vd)
 }

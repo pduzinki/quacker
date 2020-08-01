@@ -22,14 +22,14 @@ func runUserValidatorFuncs(user *User, fns ...userValidatorFunc) error {
 
 func (uv *userValidator) idGreaterThanZero(user *User) error {
 	if user.ID <= 0 {
-		return errInvalidID
+		return ErrInvalidID
 	}
 	return nil
 }
 
 func (uv *userValidator) usernameRequire(user *User) error {
 	if user.Username == "" {
-		return errUsernameRequired
+		return ErrUsernameRequired
 	}
 	return nil
 }
@@ -42,21 +42,21 @@ func (uv *userValidator) usernameNormalize(user *User) error {
 
 func (uv *userValidator) usernameCheckFormat(user *User) error {
 	if !uv.UsernameRegex.MatchString(user.Username) {
-		return errUsernameInvalidFormat
+		return ErrUsernameInvalidFormat
 	}
 	return nil
 }
 
 func (uv *userValidator) usernameIsAvailable(user *User) error {
 	existingUser, err := uv.FindByUsername(user.Username)
-	if err == errRecordNotFound {
+	if err == ErrRecordNotFound {
 		return nil
 	}
 	if err != nil {
 		return err
 	}
 	if existingUser.ID != user.ID {
-		return errUsernameTaken
+		return ErrUsernameTaken
 	}
 
 	return nil
@@ -70,28 +70,28 @@ func (uv *userValidator) emailNormalize(user *User) error {
 
 func (uv *userValidator) emailRequire(user *User) error {
 	if user.Email == "" {
-		return errEmailRequired
+		return ErrEmailRequired
 	}
 	return nil
 }
 
 func (uv *userValidator) emailCheckFormat(user *User) error {
 	if !uv.EmailRegex.MatchString(user.Email) {
-		return errEmailInvalidFormat
+		return ErrEmailInvalidFormat
 	}
 	return nil
 }
 
 func (uv *userValidator) emailIsAvailable(user *User) error {
 	existingUser, err := uv.FindByEmail(user.Email)
-	if err == errRecordNotFound {
+	if err == ErrRecordNotFound {
 		return nil
 	}
 	if err != nil {
 		return err
 	}
 	if existingUser.ID != user.ID {
-		return errEmailTaken
+		return ErrEmailTaken
 	}
 
 	return nil
@@ -99,7 +99,7 @@ func (uv *userValidator) emailIsAvailable(user *User) error {
 
 func (uv *userValidator) passwordRequire(user *User) error {
 	if user.Password == "" {
-		return errPasswordRequired
+		return ErrPasswordRequired
 	}
 	return nil
 }
@@ -123,7 +123,7 @@ func (uv *userValidator) passwordHashCreate(user *User) error {
 
 func (uv *userValidator) passwordHashRequire(user *User) error {
 	if user.PasswordHash == "" {
-		return errPasswordHashRequired
+		return ErrPasswordHashRequired
 	}
 	return nil
 }
@@ -150,7 +150,7 @@ func (uv *userValidator) rememberTokenHashCreate(user *User) error {
 
 func (uv *userValidator) rememberTokenHashRequire(user *User) error {
 	if user.RememberTokenHash == "" {
-		return errRememberTokenHashRequired
+		return ErrRememberTokenHashRequired
 	}
 	return nil
 }

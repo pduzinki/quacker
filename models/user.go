@@ -18,6 +18,7 @@ type User struct {
 	PasswordHash      string `gorm:"not null"`
 	RememberToken     string `gorm:"-"`
 	RememberTokenHash string `gorm:"not null;unique_index"`
+	About             string
 }
 
 // UserDB is an interface for interacting with user data in the database
@@ -176,7 +177,7 @@ func (ug *userGorm) FindByUsername(username string) (*User, error) {
 	err := ug.db.Where("username = ?", username).First(&u).Error
 
 	if err == gorm.ErrRecordNotFound {
-		return nil, errRecordNotFound
+		return nil, ErrRecordNotFound
 	} else if err != nil {
 		return nil, err
 	}
@@ -189,7 +190,7 @@ func (ug *userGorm) FindByEmail(email string) (*User, error) {
 	err := ug.db.Where("email = ?", email).First(&u).Error
 
 	if err == gorm.ErrRecordNotFound {
-		return nil, errRecordNotFound
+		return nil, ErrRecordNotFound
 	} else if err != nil {
 		return nil, err
 	}
@@ -201,7 +202,7 @@ func (ug *userGorm) FindByRememberToken(token string) (*User, error) {
 	err := ug.db.Where("remember_token_hash = ?", token).First(&u).Error
 
 	if err == gorm.ErrRecordNotFound {
-		return nil, errRecordNotFound
+		return nil, ErrRecordNotFound
 	} else if err != nil {
 		return nil, err
 	}

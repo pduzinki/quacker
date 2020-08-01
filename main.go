@@ -41,7 +41,6 @@ func main() {
 	// TODO later
 	// /home
 	// /explore
-	// /{user:[a-zA-Z0-9_-]}
 
 	http.ListenAndServe(":3000", r)
 }
