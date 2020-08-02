@@ -60,8 +60,6 @@ type userValidator struct {
 }
 
 func newUserValidator(u UserDB, passwordPepper, hmacKey string) *userValidator {
-	// TODO add hmac object
-
 	return &userValidator{
 		UserDB:         u,
 		EmailRegex:     regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
