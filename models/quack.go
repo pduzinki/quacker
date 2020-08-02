@@ -31,12 +31,23 @@ type quackService struct {
 }
 
 // NewQuackService creates QuackService instance
-func NewQuackService() {
+func NewQuackService(db *gorm.DB) QuackService {
+	qg := newQuackGorm(db)
+	qv := newQuackValidator(qg)
 
+	return &quackService{
+		qv,
+	}
 }
 
 type quackValidator struct {
 	QuackDB
+}
+
+func newQuackValidator(q QuackDB) *quackValidator {
+	return &quackValidator{
+		QuackDB: q,
+	}
 }
 
 func (qv *quackValidator) FindByID(id uint) (*Quack, error) {
@@ -55,12 +66,14 @@ func (qv *quackValidator) Delete(id uint) error {
 	return nil
 }
 
-func newQuackValidator() {
-
-}
-
 type quackGorm struct {
 	db *gorm.DB
+}
+
+func newQuackGorm(db *gorm.DB) *quackGorm {
+	return &quackGorm{
+		db: db,
+	}
 }
 
 func (qg *quackGorm) FindByID(id uint) (*Quack, error) {
