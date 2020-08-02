@@ -5,12 +5,14 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres" // imports postgres driver
 )
 
+// Quack represents quack data in the database
 type Quack struct {
 	gorm.Model
 	userID uint   `gorm:"not_null;index"`
 	text   string `gorm:"not null"`
 }
 
+// QuackDB is an interface for interacting with quack data in the database
 type QuackDB interface {
 	FindByID(id uint) (*Quack, error)
 	FindByUserID(id uint) ([]Quack, error)
@@ -19,6 +21,7 @@ type QuackDB interface {
 	Delete(id uint) error
 }
 
+// QuackService is an interface for interacting with quack model
 type QuackService interface {
 	QuackDB
 }
@@ -27,6 +30,7 @@ type quackService struct {
 	QuackDB
 }
 
+// NewQuackService creates QuackService instance
 func NewQuackService() {
 
 }
