@@ -17,7 +17,7 @@ type QuackDB interface {
 	FindByID(id uint) (*Quack, error)
 	FindByUserID(id uint) ([]Quack, error)
 
-	Create(q *Quack) error
+	Create(quack *Quack) error
 	Delete(id uint) error
 }
 
@@ -58,12 +58,26 @@ func (qv *quackValidator) FindByUserID(id uint) ([]Quack, error) {
 	return nil, nil
 }
 
-func (qv *quackValidator) Create(q *Quack) error {
-	return nil
+func (qv *quackValidator) Create(quack *Quack) error {
+	err := runQuackValidatorFuncs(quack,
+		qv.userIDGreaterThanZero,
+		qv.TextShorterThan160chars)
+	if err != nil {
+		return err
+	}
+
+	return qv.QuackDB.Create(quack)
 }
 
 func (qv *quackValidator) Delete(id uint) error {
-	return nil
+	quack := &Quack{}
+	quack.ID = id
+
+	err := runQuackValidatorFuncs(quack, qv.idGreaterThanZero)
+	if err != nil {
+		return err
+	}
+	return qv.QuackDB.Delete(id)
 }
 
 type quackGorm struct {
@@ -84,10 +98,13 @@ func (qg *quackGorm) FindByUserID(id uint) ([]Quack, error) {
 	return nil, nil
 }
 
-func (qg *quackGorm) Create(q *Quack) error {
-	return nil
+func (qg *quackGorm) Create(quack *Quack) error {
+	return qg.db.Create(quack).Error
 }
 
 func (qg *quackGorm) Delete(id uint) error {
-	return nil
+	quack := Quack{}
+	quack.ID = id
+
+	return qg.db.Delete(quack).Error
 }

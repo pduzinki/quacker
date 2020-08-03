@@ -18,3 +18,17 @@ func (qv *quackValidator) idGreaterThanZero(quack *Quack) error {
 	}
 	return nil
 }
+
+func (qv *quackValidator) userIDGreaterThanZero(quack *Quack) error {
+	if quack.userID == 0 {
+		return ErrInvalidID
+	}
+	return nil
+}
+
+func (qv *quackValidator) TextShorterThan160chars(quack *Quack) error {
+	if len([]rune(quack.text)) > 160 {
+		return ErrQuackTooLong
+	}
+	return nil
+}
