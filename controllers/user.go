@@ -17,6 +17,7 @@ type UserController struct {
 	LoginView    *views.View
 	SignupView   *views.View
 	UsernameView *views.View
+	NewQuackView *views.View // TODO add to constructor
 	us           models.UserService
 }
 
@@ -139,4 +140,14 @@ func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	// render page
 	uc.UsernameView.Render(w, r, vd)
+}
+
+// GetNewQuack handles GET /quack
+func (uc *UserController) GetNewQuack(w http.ResponseWriter, r *http.Request) {
+	// TODO
+}
+
+// PostNewQuack handles POST /quack
+func (uc *UserController) PostNewQuack(w http.ResponseWriter, r *http.Request) {
+	// TODO
 }

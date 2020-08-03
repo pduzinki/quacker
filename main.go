@@ -37,10 +37,12 @@ func main() {
 	r.HandleFunc("/signup", userC.GetSignup).Methods("GET")
 	r.HandleFunc("/signup", userC.PostSignup).Methods("POST")
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", userC.GetUser).Methods("GET")
+	r.HandleFunc("/quack", userC.GetNewQuack).Methods("GET")
+	r.HandleFunc("/quack", userC.PostNewQuack).Methods("POST")
 
-	// TODO later
-	// /home
-	// /explore
+	// TODO
+	// add 'new quack' functionality
+	// add quacks to user profile
 
 	http.ListenAndServe(":3000", r)
 }
