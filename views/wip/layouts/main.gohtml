@@ -1,0 +1,32 @@
+{{define "main"}}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Quacker</title>
+    </head>
+
+    <body>
+        {{template "header"}}
+        {{template "navbar"}}
+
+        <main>
+            {{if .Alert}}
+                {{template "alert"}}
+            {{end}}
+
+            {{/* this if/else is unneccessary */}}
+            {{if .User}}
+                {{template "yield" .User}}
+            {{else}}
+                {{template "yield"}} 
+            {{end}}
+        </main>
+
+        {{template "footer"}}
+    </body>
+
+<!DOCTYPE html>
+<html lang="en">
+{{end}}
