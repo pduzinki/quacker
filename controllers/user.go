@@ -76,6 +76,7 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		d.SetAlert(err)
 		uc.SignupView.Render(w, r, d)
+		return
 	}
 
 	err = uc.signIn(w, &user)

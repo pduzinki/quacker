@@ -13,7 +13,7 @@
 
         <main>
             {{if .Alert}}
-                {{template "alert"}}
+                {{template "alert" .Alert}}
             {{end}}
 
             {{/* this if/else is unneccessary */}}
