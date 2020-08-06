@@ -36,9 +36,9 @@ func main() {
 	r.HandleFunc("/login", userC.PostLogin).Methods("POST")
 	r.HandleFunc("/signup", userC.GetSignup).Methods("GET")
 	r.HandleFunc("/signup", userC.PostSignup).Methods("POST")
+	r.HandleFunc("/newquack", userC.GetNewQuack).Methods("GET")
+	r.HandleFunc("/newquack", userC.PostNewQuack).Methods("POST")
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", userC.GetUser).Methods("GET")
-	r.HandleFunc("/quack", userC.GetNewQuack).Methods("GET")
-	r.HandleFunc("/quack", userC.PostNewQuack).Methods("POST")
 
 	// TODO
 	// add 'new quack' functionality

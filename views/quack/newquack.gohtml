@@ -1,0 +1,15 @@
+{{define "yield"}}
+    {{template "newQuackForm"}}
+{{end}}
+
+{{define "newQuackForm"}}
+    <div>
+        <form action="/newquack" method="POST">
+            <div>
+                <label for="newquack">New quack:</label><br/>
+                <textarea id="newquack" name="newquack" rows="4" cols="40">What's going on?</textarea>
+            </div>
+            <button type="submit">Quack it!</button>
+        </form>
+    </div>
+{{end}}

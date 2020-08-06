@@ -28,6 +28,7 @@ func NewUserController(us models.UserService) *UserController {
 		LoginView:    views.NewView("views/user/login.gohtml"),
 		SignupView:   views.NewView("views/user/signup.gohtml"),
 		UsernameView: views.NewView("views/user/user.gohtml"),
+		NewQuackView: views.NewView("views/quack/newquack.gohtml"),
 		us:           us,
 	}
 
@@ -145,7 +146,7 @@ func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 
 // GetNewQuack handles GET /quack
 func (uc *UserController) GetNewQuack(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	uc.NewQuackView.Render(w, r, nil)
 }
 
 // PostNewQuack handles POST /quack
