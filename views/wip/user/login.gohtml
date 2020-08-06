@@ -1,0 +1,17 @@
+{{define "yield"}}
+    {{template "loginForm"}}
+{{end}}
+
+{{define "loginForm"}}
+    <form action="/login" method="POST">
+        <div>
+            <label for="username">Username of email address</label>
+            <input type="text" name="username" id="username" placeholder="Username of email">
+        </div>
+        <div>
+            <label for="password"></label>
+            <input type="password" name="password" id="password" placeholder="Password">
+        </div>
+        <button type="submit">Log in</button>
+    </form>
+{{end}}
