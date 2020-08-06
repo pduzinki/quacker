@@ -1,31 +1,17 @@
 {{define "yield"}}
-<div class="row">
-  <div class="col-md-4 col-md-offset-4">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Log in to Quacker</h3>
-      </div>
-      <div class="panel-body">
-        {{template "loginForm"}}
-      </div>
-    </div>
-  </div>
-</div>
+    {{template "loginForm"}}
 {{end}}
 
 {{define "loginForm"}}
-<form action="/login" method="POST">
-  <div class="form-group">
-    <label for="username">Username or email address</label>
-    <input type="text" name="username" class="form-control"
-      id="username" placeholder="Username or email">
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" name="password"
-      class="form-control" id="password"
-      placeholder="Password">
-  </div>
-  <button type="submit" class="btn btn-primary">Log In</button>
-</form>
+    <form action="/login" method="POST">
+        <div>
+            <label for="username">Username or email</label>
+            <input type="text" name="username" id="username" placeholder="Username of email">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" placeholder="Password">
+        </div>
+        <button type="submit">Log in</button>
+    </form>
 {{end}}

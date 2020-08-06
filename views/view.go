@@ -15,9 +15,13 @@ type View struct {
 
 // NewView creates View instance
 func NewView(file string) *View {
-	t, err := template.ParseFiles("views/layouts/page.gohtml",
+	t, err := template.ParseFiles(
+		"views/layouts/alert.gohtml",
+		"views/layouts/footer.gohtml",
+		"views/layouts/header.gohtml",
+		"views/layouts/main.gohtml",
 		"views/layouts/navbar.gohtml",
-		"views/layouts/alert.gohtml", file)
+		file)
 	if err != nil {
 		panic(err)
 	}
@@ -44,7 +48,7 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 	}
 
 	var buf bytes.Buffer
-	err := v.Template.ExecuteTemplate(&buf, "page", vd)
+	err := v.Template.ExecuteTemplate(&buf, "main", vd)
 	if err != nil {
 		http.Error(w, "Something went wrong.", http.StatusInternalServerError)
 		return
