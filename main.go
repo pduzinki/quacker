@@ -40,9 +40,5 @@ func main() {
 	r.HandleFunc("/newquack", userC.PostNewQuack).Methods("POST")
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", userC.GetUser).Methods("GET")
 
-	// TODO
-	// add 'new quack' functionality
-	// add quacks to user profile
-
 	http.ListenAndServe(":3000", r)
 }
