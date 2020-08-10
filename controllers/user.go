@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	// "fmt"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -152,4 +152,21 @@ func (uc *UserController) GetNewQuack(w http.ResponseWriter, r *http.Request) {
 // PostNewQuack handles POST /quack
 func (uc *UserController) PostNewQuack(w http.ResponseWriter, r *http.Request) {
 	// TODO
+}
+
+// CookieTest handles GET /cookietest, this function is for testing only
+func (uc *UserController) CookieTest(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("remember_token")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	user, err := uc.us.FindByRememberToken(cookie.Value)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintln(w, user)
 }

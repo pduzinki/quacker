@@ -38,6 +38,7 @@ func main() {
 	r.HandleFunc("/signup", userC.PostSignup).Methods("POST")
 	r.HandleFunc("/newquack", userC.GetNewQuack).Methods("GET")
 	r.HandleFunc("/newquack", userC.PostNewQuack).Methods("POST")
+	r.HandleFunc("/cookietest", userC.CookieTest).Methods("GET")
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", userC.GetUser).Methods("GET")
 
 	http.ListenAndServe(":3000", r)
