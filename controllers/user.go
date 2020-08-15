@@ -13,31 +13,31 @@ import (
 
 // UserController is responsible for handling user resources
 type UserController struct {
-	WelcomePageView *views.View
-	LoginView       *views.View
-	SignupView      *views.View
-	UsernameView    *views.View
-	NewQuackView    *views.View // TODO add to constructor
-	us              models.UserService
+	WelcomeView  *views.View
+	LoginView    *views.View
+	SignupView   *views.View
+	UsernameView *views.View
+	HomeView     *views.View
+	us           models.UserService
 }
 
 // NewUserController creates user controller instance
 func NewUserController(us models.UserService) *UserController {
 	uc := UserController{
-		WelcomePageView: views.NewView("views/user/welcomepage.gohtml"),
-		LoginView:       views.NewView("views/user/login.gohtml"),
-		SignupView:      views.NewView("views/user/signup.gohtml"),
-		UsernameView:    views.NewView("views/user/user.gohtml"),
-		NewQuackView:    views.NewView("views/quack/newquack.gohtml"),
-		us:              us,
+		WelcomeView:  views.NewView("views/user/welcome.gohtml"),
+		LoginView:    views.NewView("views/user/login.gohtml"),
+		SignupView:   views.NewView("views/user/signup.gohtml"),
+		UsernameView: views.NewView("views/user/user.gohtml"),
+		HomeView:     views.NewView("views/user/home.gohtml"),
+		us:           us,
 	}
 
 	return &uc
 }
 
-// GetWelcomePage handles GET /
-func (uc *UserController) GetWelcomePage(w http.ResponseWriter, r *http.Request) {
-	uc.WelcomePageView.Render(w, r, nil)
+// GetWelcome handles GET /
+func (uc *UserController) GetWelcome(w http.ResponseWriter, r *http.Request) {
+	uc.WelcomeView.Render(w, r, nil)
 }
 
 // GetLogin handles GET /login
@@ -90,10 +90,10 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-// GetHomepage handles GET /home
-func (uc *UserController) GetHomepage(w http.ResponseWriter, r *http.Request) {
+// GetHome handles GET /home
+func (uc *UserController) GetHome(w http.ResponseWriter, r *http.Request) {
 	// TODO add proper /home page
-	uc.WelcomePageView.Render(w, r, nil)
+	uc.HomeView.Render(w, r, nil)
 }
 
 // signIn creates a cookie with remember token for the given user
@@ -152,7 +152,7 @@ func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 
 // GetNewQuack handles GET /quack
 func (uc *UserController) GetNewQuack(w http.ResponseWriter, r *http.Request) {
-	uc.NewQuackView.Render(w, r, nil)
+	uc.HomeView.Render(w, r, nil)
 }
 
 // PostNewQuack handles POST /quack
