@@ -37,11 +37,12 @@ func main() {
 
 	// router
 	r := mux.NewRouter()
-	r.HandleFunc("/", userC.GetHomepage)
+	r.HandleFunc("/", userC.GetWelcomePage)
 	r.HandleFunc("/login", userC.GetLogin).Methods("GET")
 	r.HandleFunc("/login", userC.PostLogin).Methods("POST")
 	r.HandleFunc("/signup", userC.GetSignup).Methods("GET")
 	r.HandleFunc("/signup", userC.PostSignup).Methods("POST")
+	r.HandleFunc("/home", userRequireMw.ApplyFn(userC.GetHomepage))
 	r.HandleFunc("/newquack", userRequireMw.ApplyFn(userC.GetNewQuack)).Methods("GET")
 	r.HandleFunc("/newquack", userRequireMw.ApplyFn(userC.PostNewQuack)).Methods("POST")
 	r.HandleFunc("/cookietest", userC.CookieTest).Methods("GET")

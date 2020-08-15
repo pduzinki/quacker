@@ -13,31 +13,31 @@ import (
 
 // UserController is responsible for handling user resources
 type UserController struct {
-	HomepageView *views.View
-	LoginView    *views.View
-	SignupView   *views.View
-	UsernameView *views.View
-	NewQuackView *views.View // TODO add to constructor
-	us           models.UserService
+	WelcomepageView *views.View
+	LoginView       *views.View
+	SignupView      *views.View
+	UsernameView    *views.View
+	NewQuackView    *views.View // TODO add to constructor
+	us              models.UserService
 }
 
 // NewUserController creates user controller instance
 func NewUserController(us models.UserService) *UserController {
 	uc := UserController{
-		HomepageView: views.NewView("views/user/homepage.gohtml"),
-		LoginView:    views.NewView("views/user/login.gohtml"),
-		SignupView:   views.NewView("views/user/signup.gohtml"),
-		UsernameView: views.NewView("views/user/user.gohtml"),
-		NewQuackView: views.NewView("views/quack/newquack.gohtml"),
-		us:           us,
+		WelcomepageView: views.NewView("views/user/welcomepage.gohtml"),
+		LoginView:       views.NewView("views/user/login.gohtml"),
+		SignupView:      views.NewView("views/user/signup.gohtml"),
+		UsernameView:    views.NewView("views/user/user.gohtml"),
+		NewQuackView:    views.NewView("views/quack/newquack.gohtml"),
+		us:              us,
 	}
 
 	return &uc
 }
 
-// GetHomepage handles GET /
-func (uc *UserController) GetHomepage(w http.ResponseWriter, r *http.Request) {
-	uc.HomepageView.Render(w, r, nil)
+// GetWelcomePage handles GET /
+func (uc *UserController) GetWelcomePage(w http.ResponseWriter, r *http.Request) {
+	uc.WelcomepageView.Render(w, r, nil)
 }
 
 // GetLogin handles GET /login
@@ -88,6 +88,12 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 
 	// TODO redirect to /<username>
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+// GetHomepage handles GET /home
+func (uc *UserController) GetHomepage(w http.ResponseWriter, r *http.Request) {
+	// TODO add proper /home page
+	uc.WelcomepageView.Render(w, r, nil)
 }
 
 // signIn creates a cookie with remember token for the given user
