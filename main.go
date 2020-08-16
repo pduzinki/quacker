@@ -42,9 +42,8 @@ func main() {
 	r.HandleFunc("/login", userC.PostLogin).Methods("POST")
 	r.HandleFunc("/signup", userC.GetSignup).Methods("GET")
 	r.HandleFunc("/signup", userC.PostSignup).Methods("POST")
-	r.HandleFunc("/home", userRequireMw.ApplyFn(userC.GetHome))
-	r.HandleFunc("/newquack", userRequireMw.ApplyFn(userC.GetNewQuack)).Methods("GET")
-	r.HandleFunc("/newquack", userRequireMw.ApplyFn(userC.PostNewQuack)).Methods("POST")
+	r.HandleFunc("/home", userRequireMw.ApplyFn(userC.GetHome)).Methods("GET")
+	r.HandleFunc("/home", userRequireMw.ApplyFn(userC.NewQuack)).Methods("POST")
 	r.HandleFunc("/cookietest", userC.CookieTest).Methods("GET")
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", userC.GetUser).Methods("GET")
 
