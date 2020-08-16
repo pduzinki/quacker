@@ -35,10 +35,13 @@ type UserDB interface {
 // UserService is an interface for interacting with user model
 type UserService interface {
 	UserDB
+	Authenticate(login, password string) (*User, error)
 }
 
 type userService struct {
 	UserDB
+	// EmailRegex    *regexp.Regexp
+	// UsernameRegex *regexp.Regexp
 }
 
 // NewUserService creates UserService instance
@@ -49,6 +52,14 @@ func NewUserService(db *gorm.DB, passwordPepper, hmacKey string) UserService {
 	return &userService{
 		uv,
 	}
+}
+
+func (us *userService) Authenticate(login, password string) (*User, error) {
+	// TODO implement this
+
+	// determine if login is email or username
+	// use regexes from user validator
+	return nil, nil
 }
 
 type userValidator struct {

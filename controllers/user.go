@@ -37,7 +37,20 @@ func NewUserController(us models.UserService) *UserController {
 
 // GetWelcome handles GET /
 func (uc *UserController) GetWelcome(w http.ResponseWriter, r *http.Request) {
-	uc.WelcomeView.Render(w, r, nil)
+	cookie, err := r.Cookie("remember_token")
+	if err != nil {
+		uc.WelcomeView.Render(w, r, nil)
+		return
+	}
+
+	_, err = uc.us.FindByRememberToken(cookie.Value)
+	if err != nil {
+		uc.WelcomeView.Render(w, r, nil)
+		return
+	}
+
+	// user is logged in, redirect to "/home"
+	http.Redirect(w, r, "/home", http.StatusFound)
 }
 
 // GetLogin handles GET /login
@@ -47,7 +60,27 @@ func (uc *UserController) GetLogin(w http.ResponseWriter, r *http.Request) {
 
 // PostLogin handles POST /login
 func (uc *UserController) PostLogin(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	var form loginForm
+	var d views.Data
+
+	err := parseForm(r, &form)
+	if err != nil {
+		d.SetAlert(err)
+		uc.LoginView.Render(w, r, d)
+		return
+	}
+
+	// TODO add user authentication
+	user, err := uc.us.Authenticate(form.Login, form.Password)
+	if err != nil {
+
+	}
+
+	_ = user
+
+	// user := models.User{
+	// 	Username: form.Username,
+	// }
 }
 
 // GetSignup handles GET /signup
@@ -94,6 +127,11 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 func (uc *UserController) GetHome(w http.ResponseWriter, r *http.Request) {
 	// TODO add proper /home page
 	uc.HomeView.Render(w, r, nil)
+}
+
+// NewQuack handles POST /home
+func (uc *UserController) NewQuack(w http.ResponseWriter, r *http.Request) {
+	// TODO implement this
 }
 
 // signIn creates a cookie with remember token for the given user
@@ -148,16 +186,6 @@ func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	// render page
 	uc.UsernameView.Render(w, r, vd)
-}
-
-// GetNewQuack handles GET /quack
-func (uc *UserController) GetNewQuack(w http.ResponseWriter, r *http.Request) {
-	uc.HomeView.Render(w, r, nil)
-}
-
-// PostNewQuack handles POST /quack
-func (uc *UserController) PostNewQuack(w http.ResponseWriter, r *http.Request) {
-	// TODO
 }
 
 // CookieTest handles GET /cookietest, this function is for testing only
