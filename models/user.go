@@ -41,6 +41,7 @@ type UserService interface {
 
 type userService struct {
 	UserDB
+	passwordPepper string
 }
 
 // NewUserService creates UserService instance
@@ -49,14 +50,15 @@ func NewUserService(db *gorm.DB, passwordPepper, hmacKey string) UserService {
 	uv := newUserValidator(ug, passwordPepper, hmacKey)
 
 	return &userService{
-		uv,
+		UserDB:         uv,
+		passwordPepper: passwordPepper,
 	}
 }
 
 func (us *userService) Authenticate(login, password string) (*User, error) {
 	user, err := us.FindByEmail(login)
 	if err == nil {
-		err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+		err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password+us.passwordPepper))
 		if err != nil {
 			return nil, ErrCredentialsInvalid
 		}
@@ -65,7 +67,7 @@ func (us *userService) Authenticate(login, password string) (*User, error) {
 
 	user, err = us.FindByUsername(login)
 	if err == nil {
-		err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+		err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password+us.passwordPepper))
 		if err != nil {
 			return nil, ErrCredentialsInvalid
 		}
