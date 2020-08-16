@@ -70,17 +70,21 @@ func (uc *UserController) PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO add user authentication
 	user, err := uc.us.Authenticate(form.Login, form.Password)
 	if err != nil {
-
+		d.SetAlert(err)
+		uc.LoginView.Render(w, r, d)
+		return
 	}
 
-	_ = user
+	err = uc.signIn(w, user)
+	if err != nil {
+		d.SetAlert(err)
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
 
-	// user := models.User{
-	// 	Username: form.Username,
-	// }
+	http.Redirect(w, r, "/home", http.StatusFound)
 }
 
 // GetSignup handles GET /signup
@@ -115,12 +119,12 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 
 	err = uc.signIn(w, &user)
 	if err != nil {
+		d.SetAlert(err)
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 
-	// TODO redirect to /<username>
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r, "/home", http.StatusFound)
 }
 
 // GetHome handles GET /home

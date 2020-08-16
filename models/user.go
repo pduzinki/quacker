@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" // imports postgres driver
+	"golang.org/x/crypto/bcrypt"
 
 	"quacker/hash"
 )
@@ -40,8 +41,6 @@ type UserService interface {
 
 type userService struct {
 	UserDB
-	// EmailRegex    *regexp.Regexp
-	// UsernameRegex *regexp.Regexp
 }
 
 // NewUserService creates UserService instance
@@ -55,11 +54,25 @@ func NewUserService(db *gorm.DB, passwordPepper, hmacKey string) UserService {
 }
 
 func (us *userService) Authenticate(login, password string) (*User, error) {
-	// TODO implement this
+	user, err := us.FindByEmail(login)
+	if err == nil {
+		err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+		if err != nil {
+			return nil, ErrCredentialsInvalid
+		}
+		return user, nil
+	}
 
-	// determine if login is email or username
-	// use regexes from user validator
-	return nil, nil
+	user, err = us.FindByUsername(login)
+	if err == nil {
+		err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+		if err != nil {
+			return nil, ErrCredentialsInvalid
+		}
+		return user, nil
+	}
+
+	return nil, ErrCredentialsInvalid
 }
 
 type userValidator struct {
