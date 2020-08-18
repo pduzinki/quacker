@@ -27,8 +27,8 @@ func main() {
 
 	// controllers
 	userC := controllers.NewUserController(services.Us)
+	quackC := controllers.NewQuackController(services.Qs, services.Us)
 	// TODO hashtagC := controllers.NewHashtagC()
-	// TODO quackC := controllers.NewQuackC()
 
 	// middleware
 	userRequireMw := middleware.UserRequire{
@@ -42,8 +42,8 @@ func main() {
 	r.HandleFunc("/login", userC.PostLogin).Methods("POST")
 	r.HandleFunc("/signup", userC.GetSignup).Methods("GET")
 	r.HandleFunc("/signup", userC.PostSignup).Methods("POST")
-	r.HandleFunc("/home", userRequireMw.ApplyFn(userC.GetHome)).Methods("GET")
-	r.HandleFunc("/home", userRequireMw.ApplyFn(userC.NewQuack)).Methods("POST")
+	r.HandleFunc("/home", userRequireMw.ApplyFn(quackC.GetHome)).Methods("GET")
+	r.HandleFunc("/home", userRequireMw.ApplyFn(quackC.NewQuack)).Methods("POST")
 	r.HandleFunc("/cookietest", userC.CookieTest).Methods("GET")
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", userC.GetUser).Methods("GET")
 

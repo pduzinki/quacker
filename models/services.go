@@ -9,6 +9,7 @@ import (
 type Services struct {
 	db *gorm.DB
 	Us UserService
+	Qs QuackService
 }
 
 // NewServices creates Services instance
@@ -22,6 +23,7 @@ func NewServices(dialect, connectionInfo, passwordPepper, hmacKey string) *Servi
 	return &Services{
 		db: db,
 		Us: NewUserService(db, passwordPepper, hmacKey),
+		Qs: NewQuackService(db),
 	}
 }
 
@@ -32,12 +34,12 @@ func (s *Services) Close() error {
 
 // AutoMigrate performs auto migration for dabatase models
 func (s *Services) AutoMigrate() error {
-	return s.db.AutoMigrate(&User{}).Error
+	return s.db.AutoMigrate(&User{}, &Quack{}).Error
 }
 
 // RebuildDatabase drops all current database tables and performs auto migration
 func (s *Services) RebuildDatabase() error {
-	err := s.db.DropTableIfExists(&User{}).Error
+	err := s.db.DropTableIfExists(&User{}, &Quack{}).Error
 	if err != nil {
 		return err
 	}

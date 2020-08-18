@@ -18,6 +18,7 @@ type QuackDB interface {
 	FindByUserID(id uint) ([]Quack, error)
 
 	Create(quack *Quack) error
+	// No Update method, since updating quack is forbidden.
 	Delete(id uint) error
 }
 

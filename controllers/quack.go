@@ -1,26 +1,43 @@
 package controllers
 
 import (
-// "net/http"
+	"net/http"
 
-// "quacker/views"
+	"quacker/models"
+	"quacker/views"
 )
 
-// QuackC is a controller struct responsible for handling quack resources
-type QuackC struct {
-	// HomeView *views.View
+// QuackController is a controller struct responsible for handling quack resources
+type QuackController struct {
+	HomeView    *views.View
+	ProfileView *views.View
+	qs          models.QuackService
+	us          models.UserService
 }
 
-// NewQuackC creates new quack controller
-func NewQuackC() *QuackC {
-	qc := QuackC{
-		// HomeView: views.NewView("views/quack/home.gohtml"),
+// NewQuackController creates new quack controller
+func NewQuackController(qs models.QuackService, us models.UserService) *QuackController {
+	qc := QuackController{
+		HomeView:    views.NewView("views/quack/home.gohtml"),
+		ProfileView: views.NewView("views/quack/profile.gohtml"),
+		qs:          qs,
+		us:          us,
 	}
 
 	return &qc
 }
 
-// GetHomepage handles GET /
-// func (qc *QuackC) GetHomepage(w http.ResponseWriter, r *http.Request) {
-// 	qc.HomeView.Render(w, r)
-// }
+// GetHome handles GET /home
+func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
+	qc.HomeView.Render(w, r, nil)
+}
+
+// GetProfile handles GET /{:username}
+func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
+	qc.ProfileView.Render(w, r, nil)
+}
+
+// NewQuack handles POST /home
+func (qc *QuackController) NewQuack(w http.ResponseWriter, r *http.Request) {
+	// TODO
+}
