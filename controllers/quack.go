@@ -5,6 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"quacker/context"
 	"quacker/models"
 	"quacker/views"
 )
@@ -32,6 +33,35 @@ func NewQuackController(qs models.QuackService, us models.UserService) *QuackCon
 // GetHome handles GET /home
 func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
 	qc.HomeView.Render(w, r, nil)
+}
+
+// NewQuack handles POST /home (i.e. posting new quacks)
+func (qc *QuackController) NewQuack(w http.ResponseWriter, r *http.Request) {
+	var form quackForm
+	var d views.Data
+
+	err := parseForm(r, &form)
+	if err != nil {
+		d.SetAlert(err)
+		qc.HomeView.Render(w, r, d)
+		return
+	}
+
+	user := context.GetUser(r.Context())
+
+	quack := models.Quack{
+		UserID: user.ID,
+		Text:   form.Text,
+	}
+
+	err = qc.qs.Create(&quack)
+	if err != nil {
+		d.SetAlert(err)
+		qc.HomeView.Render(w, r, d)
+		return
+	}
+
+	qc.HomeView.Render(w, r, d)
 }
 
 // GetProfile handles GET /{username}
@@ -64,9 +94,4 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 	qc.ProfileView.Render(w, r, vd)
 
 	// qc.ProfileView.Render(w, r, nil)
-}
-
-// NewQuack handles POST /home
-func (qc *QuackController) NewQuack(w http.ResponseWriter, r *http.Request) {
-	// TODO
 }

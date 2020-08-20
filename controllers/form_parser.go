@@ -16,6 +16,10 @@ type loginForm struct {
 	Password string `schema:"password"`
 }
 
+type quackForm struct {
+	Text string `schema:"quacktext"`
+}
+
 func parseForm(r *http.Request, dst interface{}) error {
 	if err := r.ParseForm(); err != nil {
 		return err

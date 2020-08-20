@@ -8,8 +8,8 @@ import (
 // Quack represents quack data in the database
 type Quack struct {
 	gorm.Model
-	userID uint   `gorm:"not_null;index"`
-	text   string `gorm:"not null"`
+	UserID uint   `gorm:"not_null;index"`
+	Text   string `gorm:"not null"`
 }
 
 // QuackDB is an interface for interacting with quack data in the database
