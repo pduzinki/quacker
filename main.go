@@ -45,7 +45,7 @@ func main() {
 	r.HandleFunc("/home", userRequireMw.ApplyFn(quackC.GetHome)).Methods("GET")
 	r.HandleFunc("/home", userRequireMw.ApplyFn(quackC.NewQuack)).Methods("POST")
 	r.HandleFunc("/cookietest", userC.CookieTest).Methods("GET")
-	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", userC.GetUser).Methods("GET")
+	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", quackC.GetProfile).Methods("GET")
 
 	http.ListenAndServe(":3000", r)
 }

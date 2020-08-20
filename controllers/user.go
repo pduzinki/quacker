@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
-
 	"quacker/models"
 	"quacker/token"
 	"quacker/views"
@@ -13,23 +11,19 @@ import (
 
 // UserController is responsible for handling user resources
 type UserController struct {
-	WelcomeView  *views.View
-	LoginView    *views.View
-	SignupView   *views.View
-	UsernameView *views.View
-	HomeView     *views.View
-	us           models.UserService
+	WelcomeView *views.View
+	LoginView   *views.View
+	SignupView  *views.View
+	us          models.UserService
 }
 
 // NewUserController creates user controller instance
 func NewUserController(us models.UserService) *UserController {
 	uc := UserController{
-		WelcomeView:  views.NewView("views/user/welcome.gohtml"),
-		LoginView:    views.NewView("views/user/login.gohtml"),
-		SignupView:   views.NewView("views/user/signup.gohtml"),
-		UsernameView: views.NewView("views/user/user.gohtml"),
-		HomeView:     views.NewView("views/user/home.gohtml"),
-		us:           us,
+		WelcomeView: views.NewView("views/user/welcome.gohtml"),
+		LoginView:   views.NewView("views/user/login.gohtml"),
+		SignupView:  views.NewView("views/user/signup.gohtml"),
+		us:          us,
 	}
 
 	return &uc
@@ -127,17 +121,6 @@ func (uc *UserController) PostSignup(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/home", http.StatusFound)
 }
 
-// GetHome handles GET /home
-func (uc *UserController) GetHome(w http.ResponseWriter, r *http.Request) {
-	// TODO add proper /home page
-	uc.HomeView.Render(w, r, nil)
-}
-
-// NewQuack handles POST /home
-func (uc *UserController) NewQuack(w http.ResponseWriter, r *http.Request) {
-	// TODO implement this
-}
-
 // signIn creates a cookie with remember token for the given user
 func (uc *UserController) signIn(w http.ResponseWriter, u *models.User) error {
 	if u.RememberToken == "" {
@@ -160,36 +143,6 @@ func (uc *UserController) signIn(w http.ResponseWriter, u *models.User) error {
 
 	http.SetCookie(w, &cookie)
 	return nil
-}
-
-// GetUser handles GET /{username}
-func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
-	// read username from the url
-	var vd views.Data
-	params := mux.Vars(r)
-
-	username, prs := params["user"]
-	if prs == false {
-		// TODO add some logging
-	}
-
-	// check if user with such an username exists, get user
-	user, err := uc.us.FindByUsername(username)
-	if err == models.ErrRecordNotFound {
-		// create default user to be returned
-		user = &models.User{
-			Username: username,
-			About:    "user doesn't exist.",
-		}
-	} else if err != nil {
-		vd.SetAlert(err)
-	}
-
-	// fill data for template
-	vd.SetUser(user)
-
-	// render page
-	uc.UsernameView.Render(w, r, vd)
 }
 
 // CookieTest handles GET /cookietest, this function is for testing only
