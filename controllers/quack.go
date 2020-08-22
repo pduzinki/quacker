@@ -101,6 +101,7 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	// user didn't quack anything
 	if len(quacks) == 0 {
+		// TODO this isn't really elegant, consider refactoring profile.gohtml template
 		nilQuack := models.Quack{
 			Text: "user didn't quack anything yet.",
 		}
