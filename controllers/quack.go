@@ -85,13 +85,32 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 		}
 	} else if err != nil {
 		vd.SetAlert(err)
+		qc.ProfileView.Render(w, r, vd)
+		return
 	}
 
 	// fill data for template
 	vd.SetUser(user)
 
+	quacks, err := qc.qs.FindByUserID(user.ID)
+	if err != nil {
+		vd.SetAlert(err)
+		qc.ProfileView.Render(w, r, vd)
+		return
+	}
+
+	// user didn't quack anything
+	if len(quacks) == 0 {
+		nilQuack := models.Quack{
+			Text: "user didn't quack anything yet.",
+		}
+		vd.Yield = []models.Quack{nilQuack}
+		qc.ProfileView.Render(w, r, vd)
+		return
+	}
+
+	vd.Yield = quacks
+
 	// render page
 	qc.ProfileView.Render(w, r, vd)
-
-	// qc.ProfileView.Render(w, r, nil)
 }

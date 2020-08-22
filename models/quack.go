@@ -52,11 +52,29 @@ func newQuackValidator(q QuackDB) *quackValidator {
 }
 
 func (qv *quackValidator) FindByID(id uint) (*Quack, error) {
-	return nil, nil
+	q := Quack{}
+	q.ID = id
+
+	err := runQuackValidatorFuncs(&q,
+		qv.idGreaterThanZero)
+	if err != nil {
+		return nil, err
+	}
+
+	return qv.QuackDB.FindByID(id)
 }
 
 func (qv *quackValidator) FindByUserID(id uint) ([]Quack, error) {
-	return nil, nil
+	q := Quack{}
+	q.UserID = id
+
+	err := runQuackValidatorFuncs(&q,
+		qv.userIDGreaterThanZero)
+	if err != nil {
+		return nil, err
+	}
+
+	return qv.QuackDB.FindByUserID(id)
 }
 
 func (qv *quackValidator) Create(quack *Quack) error {
@@ -92,11 +110,27 @@ func newQuackGorm(db *gorm.DB) *quackGorm {
 }
 
 func (qg *quackGorm) FindByID(id uint) (*Quack, error) {
-	return nil, nil
+	q := Quack{}
+
+	err := qg.db.Where("id = ?", id).First(&q).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, ErrRecordNotFound
+	} else if err != nil {
+		return nil, err
+	}
+
+	return &q, nil
 }
 
 func (qg *quackGorm) FindByUserID(id uint) ([]Quack, error) {
-	return nil, nil
+	q := make([]Quack, 1)
+
+	err := qg.db.Order("id desc").Where("user_id = ?", id).Find(&q).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return q, nil
 }
 
 func (qg *quackGorm) Create(quack *Quack) error {
