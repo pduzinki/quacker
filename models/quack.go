@@ -16,6 +16,7 @@ type Quack struct {
 type QuackDB interface {
 	FindByID(id uint) (*Quack, error)
 	FindByUserID(id uint) ([]Quack, error)
+	// TODO perhaps add later: FindByUserIDWithLimit(id, limit, offset uint) ([]Quack, error)
 
 	Create(quack *Quack) error
 	// No Update method, since updating quack is forbidden.
