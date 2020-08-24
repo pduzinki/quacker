@@ -26,8 +26,8 @@ func (fv *followValidator) userIDGreaterThanZero(follow *Follow) error {
 	return nil
 }
 
-func (fv *followValidator) followedUserIDGraterThanZero(follow *Follow) error {
-	if follow.FollowedUserID <= 0 {
+func (fv *followValidator) followsUserIDGraterThanZero(follow *Follow) error {
+	if follow.FollowsUserID <= 0 {
 		return ErrInvalidID
 	}
 	return nil

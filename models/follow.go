@@ -8,8 +8,8 @@ import (
 // Follow represents 'follow' relation in the database
 type Follow struct {
 	gorm.Model
-	UserID         uint `gorm:"not_null;index"`
-	FollowedUserID uint `gorm:"not_null"`
+	UserID        uint `gorm:"not_null;index"`
+	FollowsUserID uint `gorm:"not_null"`
 }
 
 // FollowDB is an inferface for interacting with follow data in the database
@@ -17,7 +17,7 @@ type FollowDB interface {
 	FindByID(id uint) (*Follow, error)
 	FindByUserID(id uint) ([]Follow, error)
 
-	Create(f *Follow) error
+	Create(follow *Follow) error
 	// No update method, not needed.
 	Delete(id uint) error
 }
@@ -52,19 +52,53 @@ func newFollowValidator(f FollowDB) *followValidator {
 }
 
 func (fv *followValidator) FindByID(id uint) (*Follow, error) {
-	return nil, nil
+	follow := Follow{}
+	follow.ID = id
+
+	err := runFollowValidatorFuncs(&follow,
+		fv.idGreaterThanZero)
+	if err != nil {
+		return nil, err
+	}
+
+	return fv.FollowDB.FindByID(id)
 }
 
 func (fv *followValidator) FindByUserID(id uint) ([]Follow, error) {
-	return nil, nil
+	follow := Follow{}
+	follow.UserID = id
+
+	err := runFollowValidatorFuncs(&follow,
+		fv.userIDGreaterThanZero)
+	if err != nil {
+		return nil, err
+	}
+
+	return fv.FollowDB.FindByUserID(id)
 }
 
-func (fv *followValidator) Create(f *Follow) error {
-	return nil
+func (fv *followValidator) Create(follow *Follow) error {
+	err := runFollowValidatorFuncs(follow,
+		fv.idGreaterThanZero,
+		fv.followsUserIDGraterThanZero)
+	if err != nil {
+		return err
+	}
+
+	return fv.FollowDB.Create(follow)
 }
 
 func (fv *followValidator) Delete(id uint) error {
-	return nil
+	follow := Follow{}
+	follow.ID = id
+
+	err := runFollowValidatorFuncs(&follow,
+		fv.userIDGreaterThanZero)
+	if err != nil {
+		return err
+	}
+
+	return fv.FollowDB.Delete(id)
 }
 
 type followGorm struct {
@@ -78,17 +112,34 @@ func newFollowGorm(db *gorm.DB) *followGorm {
 }
 
 func (fg *followGorm) FindByID(id uint) (*Follow, error) {
-	return nil, nil
+	follow := Follow{}
+	err := fg.db.Where("id = ?", id).First(&follow).Error
+	if err == gorm.ErrRecordNotFound {
+
+	} else if err != nil {
+
+	}
+	return &follow, nil
 }
 
 func (fg *followGorm) FindByUserID(id uint) ([]Follow, error) {
-	return nil, nil
+	follows := make([]Follow, 1)
+
+	err := fg.db.Where("user_id = ?", id).Find(&follows).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return follows, nil
 }
 
-func (fg *followGorm) Create(f *Follow) error {
-	return nil
+func (fg *followGorm) Create(follow *Follow) error {
+	return fg.db.Create(follow).Error
 }
 
 func (fg *followGorm) Delete(id uint) error {
-	return nil
+	follow := Follow{}
+	follow.ID = id
+
+	return fg.db.Delete(follow).Error
 }
