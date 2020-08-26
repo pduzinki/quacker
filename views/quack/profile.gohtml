@@ -3,6 +3,9 @@
 <p>About:</p>
 <p>{{.User.About}}</p>
 
+{{template "follow" .}}
+{{template "unfollow" .}}
+
 <p>{{.User.Username}}'s recent quacks:</p>
 {{range .Yield}}
     <p>{{.Text}}</p>

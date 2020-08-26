@@ -27,7 +27,8 @@ func main() {
 
 	// controllers
 	userC := controllers.NewUserController(services.Us)
-	quackC := controllers.NewQuackController(services.Qs, services.Us, services.Fs)
+	quackC := controllers.NewQuackController(services.Qs, services.Us)
+	followC := controllers.NewFollowController(services.Fs)
 	// TODO hashtagC := controllers.NewHashtagC()
 
 	// middleware
@@ -45,6 +46,10 @@ func main() {
 	r.HandleFunc("/home", userRequireMw.ApplyFn(quackC.GetHome)).Methods("GET")
 	r.HandleFunc("/home", userRequireMw.ApplyFn(quackC.NewQuack)).Methods("POST")
 	r.HandleFunc("/cookietest", userC.CookieTest).Methods("GET")
+
+	r.HandleFunc("/follow", followC.FollowUser).Methods("POST")
+	r.HandleFunc("/unfollow", followC.UnfollowUser).Methods("POST")
+
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", quackC.GetProfile).Methods("GET")
 
 	http.ListenAndServe(":3000", r)

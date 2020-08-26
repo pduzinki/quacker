@@ -16,17 +16,15 @@ type QuackController struct {
 	ProfileView *views.View
 	qs          models.QuackService
 	us          models.UserService
-	fs          models.FollowService
 }
 
 // NewQuackController creates new quack controller
-func NewQuackController(qs models.QuackService, us models.UserService, fs models.FollowService) *QuackController {
+func NewQuackController(qs models.QuackService, us models.UserService) *QuackController {
 	qc := QuackController{
 		HomeView:    views.NewView("views/quack/home.gohtml"),
-		ProfileView: views.NewView("views/quack/profile.gohtml"),
+		ProfileView: views.NewView("views/quack/profile.gohtml", "views/follow/follow.gohtml", "views/follow/unfollow.gohtml"),
 		qs:          qs,
 		us:          us,
-		fs:          fs,
 	}
 
 	return &qc

@@ -14,14 +14,14 @@ type View struct {
 }
 
 // NewView creates View instance
-func NewView(file string) *View {
-	t, err := template.ParseFiles(
-		"views/layouts/alert.gohtml",
+func NewView(files ...string) *View {
+	files = append(files, "views/layouts/alert.gohtml",
 		"views/layouts/footer.gohtml",
 		"views/layouts/header.gohtml",
 		"views/layouts/main.gohtml",
-		"views/layouts/navbar.gohtml",
-		file)
+		"views/layouts/navbar.gohtml")
+
+	t, err := template.ParseFiles(files...)
 	if err != nil {
 		panic(err)
 	}
