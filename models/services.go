@@ -10,6 +10,7 @@ type Services struct {
 	db *gorm.DB
 	Us UserService
 	Qs QuackService
+	Fs FollowService
 }
 
 // NewServices creates Services instance
@@ -24,6 +25,7 @@ func NewServices(dialect, connectionInfo, passwordPepper, hmacKey string) *Servi
 		db: db,
 		Us: NewUserService(db, passwordPepper, hmacKey),
 		Qs: NewQuackService(db),
+		Fs: NewFollowService(db),
 	}
 }
 

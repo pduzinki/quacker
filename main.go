@@ -27,7 +27,7 @@ func main() {
 
 	// controllers
 	userC := controllers.NewUserController(services.Us)
-	quackC := controllers.NewQuackController(services.Qs, services.Us)
+	quackC := controllers.NewQuackController(services.Qs, services.Us, services.Fs)
 	// TODO hashtagC := controllers.NewHashtagC()
 
 	// middleware
