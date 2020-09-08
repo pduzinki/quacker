@@ -9,11 +9,19 @@ type Alert struct {
 	Message string
 }
 
+type Profile struct {
+	Exists   bool
+	Username string
+	About    string
+	Followed bool
+	Quacks   []models.Quack
+}
+
 // Data
 type Data struct {
 	Alert *Alert
 	Yield interface{}
-	User  *models.User
+	// User  *models.User
 }
 
 // SetAlert sets value of an alert
@@ -24,8 +32,8 @@ func (d *Data) SetAlert(err error) {
 	}
 }
 
-func (d *Data) SetUser(u *models.User) {
-	d.User = u
-}
+// func (d *Data) SetUser(u *models.User) {
+// 	d.User = u
+// }
 
 // TODO add alerts saved in cookies, for redirects

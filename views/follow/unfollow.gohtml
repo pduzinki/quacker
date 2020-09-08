@@ -1,5 +1,5 @@
 {{define "unfollow"}}
-    <form action="/unfollow" method="POST">
+    <form action="{{.Yield.Username}}/unfollow" method="POST">
         <button type="unfollow">Unfollow</button>
     </form>
 {{end}}

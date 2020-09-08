@@ -1,15 +1,22 @@
 {{define "yield"}}
-<p>This is a {{.User.Username}} profile page.</p>
-<p>About:</p>
-<p>{{.User.About}}</p>
 
-{{template "follow" .}}
-{{template "unfollow" .}}
+{{if .Yield.Exists}}
+    <p>This is a {{.Yield.Username}} profile page.</p>
+    <p>About:</p>
+    <p>{{.Yield.About}}</p>
 
-<p>{{.User.Username}}'s recent quacks:</p>
-{{range .Yield}}
-    <p>{{.Text}}</p>
+    {{if .Yield.Followed}}
+        {{template "unfollow" .}}
+    {{else}}
+        {{template "follow" .}}
+    {{end}}
+
+    <p>{{.Yield.Username}}'s recent quacks:</p>
+    {{range .Yield.Quacks}}
+        <p>{{.Text}}</p>
+    {{end}}
+{{else}}
+    <p>{{.Yield.Username}} doesn't exist.</p>
 {{end}}
 
-{{/* <p>You are logged in as: {{.}}</p> */}}
 {{end}}

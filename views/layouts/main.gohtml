@@ -16,12 +16,7 @@
                 {{template "alert" .Alert}}
             {{end}}
 
-            {{/* this if/else is unneccessary */}}
-            {{if .User}}
-                {{template "yield" .}}
-            {{else}}
-                {{template "yield"}} 
-            {{end}}
+            {{template "yield" .}}
         </main>
 
         {{template "footer"}}

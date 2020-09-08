@@ -78,19 +78,17 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 	// check if user with such an username exists, get user
 	user, err := qc.us.FindByUsername(username)
 	if err == models.ErrRecordNotFound {
-		// create default user to be returned
-		user = &models.User{
+		vd.Yield = views.Profile{
+			Exists:   false,
 			Username: username,
-			About:    "user doesn't exist.",
 		}
+		qc.ProfileView.Render(w, r, vd)
+		return
 	} else if err != nil {
 		vd.SetAlert(err)
 		qc.ProfileView.Render(w, r, vd)
 		return
 	}
-
-	// fill data for template
-	vd.SetUser(user)
 
 	quacks, err := qc.qs.FindByUserID(user.ID)
 	if err != nil {
@@ -99,18 +97,13 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// user didn't quack anything
-	if len(quacks) == 0 {
-		// TODO this isn't really elegant, consider refactoring profile.gohtml template
-		nilQuack := models.Quack{
-			Text: "user didn't quack anything yet.",
-		}
-		vd.Yield = []models.Quack{nilQuack}
-		qc.ProfileView.Render(w, r, vd)
-		return
+	vd.Yield = views.Profile{
+		Exists:   true,
+		Username: user.Username,
+		About:    user.About,
+		Followed: true, // TODO check follow status
+		Quacks:   quacks,
 	}
-
-	vd.Yield = quacks
 
 	// render page
 	qc.ProfileView.Render(w, r, vd)

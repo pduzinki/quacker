@@ -1,5 +1,5 @@
 {{define "follow"}}
-    <form action="/follow" method="POST">
+    <form action="{{.Yield.Username}}/follow" method="POST">
         <button type="follow">Follow</button>
     </form>
 {{end}}
