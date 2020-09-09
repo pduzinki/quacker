@@ -8,18 +8,20 @@ import (
 // Follow represents 'follow' relation in the database
 type Follow struct {
 	gorm.Model
-	UserID        uint `gorm:"not_null;index"`
-	FollowsUserID uint `gorm:"not_null"`
+	UserID        uint `gorm:"not_null;index:idx_member"`
+	FollowsUserID uint `gorm:"not_null;index:idx_member"`
 }
 
 // FollowDB is an inferface for interacting with follow data in the database
 type FollowDB interface {
 	FindByID(id uint) (*Follow, error)
 	FindByUserID(id uint) ([]Follow, error)
+	FindByIDs(loggedUserID, followedUserID uint) (*Follow, error)
 
 	Create(follow *Follow) error
 	// No update method, not needed.
 	Delete(id uint) error
+	Delete2(loggedUserID, followedUserID uint) error // TODO implement this
 }
 
 // FollowService is an inferface for interacting with follow model
@@ -77,6 +79,11 @@ func (fv *followValidator) FindByUserID(id uint) ([]Follow, error) {
 	return fv.FollowDB.FindByUserID(id)
 }
 
+func (fv *followValidator) FindByIDs(loggedUserID, followedUserID uint) (*Follow, error) {
+	// TODO implement this
+	return fv.FollowDB.FindByIDs(loggedUserID, followedUserID)
+}
+
 func (fv *followValidator) Create(follow *Follow) error {
 	err := runFollowValidatorFuncs(follow,
 		fv.userIDGreaterThanZero,
@@ -99,6 +106,11 @@ func (fv *followValidator) Delete(id uint) error {
 	}
 
 	return fv.FollowDB.Delete(id)
+}
+
+func (fv *followValidator) Delete2(loggedUserID, followedUserID uint) error {
+	// TODO implement this
+	return fv.FollowDB.Delete2(loggedUserID, followedUserID)
 }
 
 type followGorm struct {
@@ -133,6 +145,11 @@ func (fg *followGorm) FindByUserID(id uint) ([]Follow, error) {
 	return follows, nil
 }
 
+func (fg *followGorm) FindByIDs(loggedUserID, followedUserID uint) (*Follow, error) {
+	// TODO implement this
+	return nil, nil
+}
+
 func (fg *followGorm) Create(follow *Follow) error {
 	return fg.db.Create(follow).Error
 }
@@ -142,4 +159,9 @@ func (fg *followGorm) Delete(id uint) error {
 	follow.ID = id
 
 	return fg.db.Delete(follow).Error
+}
+
+func (fg *followGorm) Delete2(loggedUserID, followedUserID uint) error {
+	// TODO implement this
+	return nil
 }
