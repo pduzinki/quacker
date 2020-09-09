@@ -36,12 +36,12 @@ func (s *Services) Close() error {
 
 // AutoMigrate performs auto migration for dabatase models
 func (s *Services) AutoMigrate() error {
-	return s.db.AutoMigrate(&User{}, &Quack{}).Error
+	return s.db.AutoMigrate(&User{}, &Quack{}, &Follow{}).Error
 }
 
 // RebuildDatabase drops all current database tables and performs auto migration
 func (s *Services) RebuildDatabase() error {
-	err := s.db.DropTableIfExists(&User{}, &Quack{}).Error
+	err := s.db.DropTableIfExists(&User{}, &Quack{}, &Follow{}).Error
 	if err != nil {
 		return err
 	}

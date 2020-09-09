@@ -5,10 +5,14 @@
     <p>About:</p>
     <p>{{.Yield.About}}</p>
 
-    {{if .Yield.Followed}}
-        {{template "unfollow" .}}
+    {{if .Yield.Self}}
+    {{/* TODO add 'set profile' button later, for now, no button in here */}}
     {{else}}
-        {{template "follow" .}}
+        {{if .Yield.Followed}}
+            {{template "unfollow" .}}
+        {{else}}
+            {{template "follow" .}}
+        {{end}}
     {{end}}
 
     <p>{{.Yield.Username}}'s recent quacks:</p>

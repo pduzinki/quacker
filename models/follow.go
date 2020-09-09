@@ -79,7 +79,7 @@ func (fv *followValidator) FindByUserID(id uint) ([]Follow, error) {
 
 func (fv *followValidator) Create(follow *Follow) error {
 	err := runFollowValidatorFuncs(follow,
-		fv.idGreaterThanZero,
+		fv.userIDGreaterThanZero,
 		fv.followsUserIDGraterThanZero)
 	if err != nil {
 		return err

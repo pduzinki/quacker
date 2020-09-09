@@ -10,9 +10,10 @@ type Alert struct {
 }
 
 type Profile struct {
-	Exists   bool
 	Username string
 	About    string
+	Exists   bool
+	Self     bool
 	Followed bool
 	Quacks   []models.Quack
 }
