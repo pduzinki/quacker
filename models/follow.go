@@ -21,7 +21,6 @@ type FollowDB interface {
 	Create(follow *Follow) error
 	// No update method, not needed.
 	Delete(id uint) error
-	Delete2(loggedUserID, followedUserID uint) error // TODO implement this
 }
 
 // FollowService is an inferface for interacting with follow model
@@ -80,7 +79,19 @@ func (fv *followValidator) FindByUserID(id uint) ([]Follow, error) {
 }
 
 func (fv *followValidator) FindByIDs(loggedUserID, followedUserID uint) (*Follow, error) {
-	// TODO implement this
+	follow := Follow{
+		UserID:        loggedUserID,
+		FollowsUserID: followedUserID,
+	}
+
+	err := runFollowValidatorFuncs(&follow,
+		fv.userIDGreaterThanZero,
+		fv.followsUserIDGraterThanZero,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	return fv.FollowDB.FindByIDs(loggedUserID, followedUserID)
 }
 
@@ -100,17 +111,12 @@ func (fv *followValidator) Delete(id uint) error {
 	follow.ID = id
 
 	err := runFollowValidatorFuncs(&follow,
-		fv.userIDGreaterThanZero)
+		fv.idGreaterThanZero)
 	if err != nil {
 		return err
 	}
 
 	return fv.FollowDB.Delete(id)
-}
-
-func (fv *followValidator) Delete2(loggedUserID, followedUserID uint) error {
-	// TODO implement this
-	return fv.FollowDB.Delete2(loggedUserID, followedUserID)
 }
 
 type followGorm struct {
@@ -146,8 +152,10 @@ func (fg *followGorm) FindByUserID(id uint) ([]Follow, error) {
 }
 
 func (fg *followGorm) FindByIDs(loggedUserID, followedUserID uint) (*Follow, error) {
-	// TODO implement this
-	return nil, nil
+	follow := Follow{}
+
+	err := fg.db.Where("user_id = ? and follows_user_id = ?", loggedUserID, followedUserID).First(&follow).Error
+	return &follow, err
 }
 
 func (fg *followGorm) Create(follow *Follow) error {
@@ -159,9 +167,4 @@ func (fg *followGorm) Delete(id uint) error {
 	follow.ID = id
 
 	return fg.db.Delete(follow).Error
-}
-
-func (fg *followGorm) Delete2(loggedUserID, followedUserID uint) error {
-	// TODO implement this
-	return nil
 }

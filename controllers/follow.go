@@ -42,7 +42,11 @@ func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = userToFollow
+	if loggedUser.ID == userToFollow.ID {
+		// that shouldn't happen
+		http.Redirect(w, r, "/"+userToFollow.Username, http.StatusFound)
+		return
+	}
 
 	follow := models.Follow{
 		UserID:        loggedUser.ID,
@@ -52,6 +56,7 @@ func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 	err = fc.fs.Create(&follow)
 	if err != nil {
 		log.Println("Failed to create follow relation: ", err)
+		// TODO add persiting alert
 	}
 
 	http.Redirect(w, r, "/"+userToFollow.Username, http.StatusFound)
@@ -59,5 +64,42 @@ func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 
 // TODO add proper description
 func (fc *FollowController) UnfollowUser(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/home", http.StatusFound)
+	loggedUser := context.GetUser(r.Context())
+	params := mux.Vars(r)
+
+	username, prs := params["user"]
+	if prs == false {
+		// TODO add some logging
+	}
+
+	userToUnfollow, err := fc.us.FindByUsername(username)
+	if err != nil {
+		http.Redirect(w, r, "/home", http.StatusFound)
+		return
+	}
+
+	if loggedUser.ID == userToUnfollow.ID {
+		// that shouldn't happen
+		http.Redirect(w, r, "/"+userToUnfollow.Username, http.StatusFound)
+		return
+	}
+
+	follow, err := fc.fs.FindByIDs(loggedUser.ID, userToUnfollow.ID)
+	if err != nil {
+		// TODO add persistent alert
+		http.Redirect(w, r, "/"+userToUnfollow.Username, http.StatusFound)
+		return
+	}
+
+	// TODO that should not happen, but what if same follow relation exists twice in the db?
+	// then it would be better for FindByIDs to return []Follow and then call Delete in a loop
+
+	err = fc.fs.Delete(follow.ID)
+	if err != nil {
+		// TODO add persistent alert
+		http.Redirect(w, r, "/"+userToUnfollow.Username, http.StatusFound)
+		return
+	}
+
+	http.Redirect(w, r, "/"+userToUnfollow.Username, http.StatusFound)
 }
