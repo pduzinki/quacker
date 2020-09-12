@@ -32,3 +32,8 @@ func (fv *followValidator) followsUserIDGraterThanZero(follow *Follow) error {
 	}
 	return nil
 }
+
+func (fv *followValidator) followIsUnique(follow *Follow) error {
+	// TODO implement this
+	return nil
+}

@@ -92,10 +92,6 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO this is not optimal, changes in follow model needed for improvement
-	// get all follows of logged in user
-	// compare id of profiled user with follows of logged user
-
 	loggedUser := &models.User{}
 	cookie, _ := r.Cookie("remember_token")
 	if cookie != nil {
@@ -108,6 +104,8 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 		self = true
 	} else {
 		if loggedUser != nil {
+			// TODO replace with call to FindByIDs
+
 			follows, _ := qc.fs.FindByUserID(loggedUser.ID)
 
 			for _, follow := range follows {
