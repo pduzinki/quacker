@@ -34,6 +34,24 @@ func (fv *followValidator) followsUserIDGraterThanZero(follow *Follow) error {
 }
 
 func (fv *followValidator) followIsUnique(follow *Follow) error {
-	// TODO implement this
+	existing, err := fv.FindByIDs(follow.ID, follow.FollowsUserID)
+	if err == ErrRecordNotFound {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if follow.ID == existing.ID {
+		return ErrAlreadyFollows
+	}
+
+	return nil
+}
+
+func (fv *followValidator) userNotFollowsThemself(follow *Follow) error {
+	if follow.UserID == follow.FollowsUserID {
+		return ErrFollowsThemself
+	}
+
 	return nil
 }

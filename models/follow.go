@@ -98,7 +98,9 @@ func (fv *followValidator) FindByIDs(loggedUserID, followedUserID uint) (*Follow
 func (fv *followValidator) Create(follow *Follow) error {
 	err := runFollowValidatorFuncs(follow,
 		fv.userIDGreaterThanZero,
-		fv.followsUserIDGraterThanZero)
+		fv.followsUserIDGraterThanZero,
+		fv.followIsUnique,
+		fv.userNotFollowsThemself)
 	if err != nil {
 		return err
 	}

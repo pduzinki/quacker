@@ -18,4 +18,6 @@ var (
 	ErrRememberTokenHashRequired = errors.New("model: Remember token hash required")
 	ErrQuackTooLong              = errors.New("model: Quack too long")
 	ErrCredentialsInvalid        = errors.New("model: Login credentials invalid")
+	ErrAlreadyFollows            = errors.New("model: User already followed")
+	ErrFollowsThemself           = errors.New("model: User tries to follow themself")
 )
