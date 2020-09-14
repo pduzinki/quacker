@@ -14,7 +14,7 @@ type UserRequire struct {
 	models.UserService
 }
 
-// ApplyFn TODO add description ...
+// ApplyFn applies middleware to given function
 func (mw *UserRequire) ApplyFn(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("remember_token")
