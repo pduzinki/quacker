@@ -42,12 +42,6 @@ func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if loggedUser.ID == userToFollow.ID {
-		// that shouldn't happen
-		http.Redirect(w, r, "/"+userToFollow.Username, http.StatusFound)
-		return
-	}
-
 	follow := models.Follow{
 		UserID:        loggedUser.ID,
 		FollowsUserID: userToFollow.ID,
@@ -55,7 +49,7 @@ func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 
 	err = fc.fs.Create(&follow)
 	if err != nil {
-		log.Println("Failed to create follow relation: ", err)
+		log.Println("Failed to follow user: ", err)
 		// TODO add persiting alert
 	}
 
@@ -75,12 +69,6 @@ func (fc *FollowController) UnfollowUser(w http.ResponseWriter, r *http.Request)
 	userToUnfollow, err := fc.us.FindByUsername(username)
 	if err != nil {
 		http.Redirect(w, r, "/home", http.StatusFound)
-		return
-	}
-
-	if loggedUser.ID == userToUnfollow.ID {
-		// that shouldn't happen
-		http.Redirect(w, r, "/"+userToUnfollow.Username, http.StatusFound)
 		return
 	}
 
