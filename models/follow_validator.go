@@ -34,7 +34,7 @@ func (fv *followValidator) followsUserIDGraterThanZero(follow *Follow) error {
 }
 
 func (fv *followValidator) followIsUnique(follow *Follow) error {
-	existing, err := fv.FindByIDs(follow.ID, follow.FollowsUserID)
+	existing, err := fv.FindByIDs(follow.UserID, follow.FollowsUserID)
 	if err == ErrRecordNotFound {
 		return nil
 	}

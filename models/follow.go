@@ -135,9 +135,9 @@ func (fg *followGorm) FindByID(id uint) (*Follow, error) {
 	follow := Follow{}
 	err := fg.db.Where("id = ?", id).First(&follow).Error
 	if err == gorm.ErrRecordNotFound {
-
+		return nil, ErrRecordNotFound
 	} else if err != nil {
-
+		return nil, err
 	}
 	return &follow, nil
 }
@@ -146,7 +146,9 @@ func (fg *followGorm) FindByUserID(id uint) ([]Follow, error) {
 	follows := make([]Follow, 1)
 
 	err := fg.db.Where("user_id = ?", id).Find(&follows).Error
-	if err != nil {
+	if err == gorm.ErrRecordNotFound {
+		return nil, ErrRecordNotFound
+	} else if err != nil {
 		return nil, err
 	}
 
@@ -157,6 +159,12 @@ func (fg *followGorm) FindByIDs(loggedUserID, followedUserID uint) (*Follow, err
 	follow := Follow{}
 
 	err := fg.db.Where("user_id = ? and follows_user_id = ?", loggedUserID, followedUserID).First(&follow).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, ErrRecordNotFound
+	} else if err != nil {
+		return nil, err
+	}
+
 	return &follow, err
 }
 
