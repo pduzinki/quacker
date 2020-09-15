@@ -47,6 +47,12 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 		}
 	}
 
+	alert := getAlert(r)
+	if alert != nil {
+		vd.Alert = alert
+		clearAlert(w)
+	}
+
 	var buf bytes.Buffer
 	err := v.Template.ExecuteTemplate(&buf, "main", vd)
 	if err != nil {

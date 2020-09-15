@@ -6,6 +6,7 @@ import (
 
 	"quacker/context"
 	"quacker/models"
+	"quacker/views"
 
 	"github.com/gorilla/mux"
 )
@@ -38,7 +39,11 @@ func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 
 	userToFollow, err := fc.us.FindByUsername(username)
 	if err != nil {
-		http.Redirect(w, r, "/home", http.StatusFound)
+		alert := views.Alert{
+			Level:   "danger",
+			Message: err.Error(),
+		}
+		views.RedirectWithAlert(w, r, "/"+userToFollow.Username, http.StatusFound, alert)
 		return
 	}
 
