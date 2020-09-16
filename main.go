@@ -35,6 +35,9 @@ func main() {
 	userRequireMw := middleware.UserRequire{
 		UserService: services.Us,
 	}
+	userLoggedMw := middleware.UserLogged{
+		UserService: services.Us,
+	}
 
 	// router
 	r := mux.NewRouter()
@@ -52,5 +55,5 @@ func main() {
 
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", quackC.GetProfile).Methods("GET")
 
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":3000", userLoggedMw.Apply(r))
 }
