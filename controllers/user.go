@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"quacker/context"
 	"quacker/models"
 	"quacker/token"
 	"quacker/views"
@@ -49,6 +50,11 @@ func (uc *UserController) GetWelcome(w http.ResponseWriter, r *http.Request) {
 
 // GetLogin handles GET /login
 func (uc *UserController) GetLogin(w http.ResponseWriter, r *http.Request) {
+	user := context.GetUser(r.Context())
+	if user != nil {
+		http.Redirect(w, r, "/home", http.StatusFound)
+	}
+
 	uc.LoginView.Render(w, r, nil)
 }
 
@@ -83,6 +89,11 @@ func (uc *UserController) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 // GetSignup handles GET /signup
 func (uc *UserController) GetSignup(w http.ResponseWriter, r *http.Request) {
+	user := context.GetUser(r.Context())
+	if user != nil {
+		http.Redirect(w, r, "/home", http.StatusFound)
+	}
+
 	uc.SignupView.Render(w, r, nil)
 }
 
