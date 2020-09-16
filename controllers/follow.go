@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"quacker/context"
@@ -32,10 +31,7 @@ func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 
 	_ = loggedUser
 
-	username, prs := params["user"]
-	if prs == false {
-		// TODO add some logging
-	}
+	username, _ := params["user"]
 
 	userToFollow, err := fc.us.FindByUsername(username)
 	if err != nil {
@@ -54,8 +50,12 @@ func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 
 	err = fc.fs.Create(&follow)
 	if err != nil {
-		log.Println("Failed to follow user: ", err)
-		// TODO add persiting alert
+		alert := views.Alert{
+			Level:   "danger",
+			Message: err.Error(),
+		}
+		views.RedirectWithAlert(w, r, "/"+userToFollow.Username, http.StatusFound, alert)
+		return
 	}
 
 	http.Redirect(w, r, "/"+userToFollow.Username, http.StatusFound)
@@ -66,28 +66,35 @@ func (fc *FollowController) UnfollowUser(w http.ResponseWriter, r *http.Request)
 	loggedUser := context.GetUser(r.Context())
 	params := mux.Vars(r)
 
-	username, prs := params["user"]
-	if prs == false {
-		// TODO add some logging
-	}
+	username, _ := params["user"]
 
 	userToUnfollow, err := fc.us.FindByUsername(username)
 	if err != nil {
-		http.Redirect(w, r, "/home", http.StatusFound)
+		alert := views.Alert{
+			Level:   "danger",
+			Message: err.Error(),
+		}
+		views.RedirectWithAlert(w, r, "/"+userToUnfollow.Username, http.StatusFound, alert)
 		return
 	}
 
 	follow, err := fc.fs.FindByIDs(loggedUser.ID, userToUnfollow.ID)
 	if err != nil {
-		// TODO add persistent alert
-		http.Redirect(w, r, "/"+userToUnfollow.Username, http.StatusFound)
+		alert := views.Alert{
+			Level:   "danger",
+			Message: err.Error(),
+		}
+		views.RedirectWithAlert(w, r, "/"+userToUnfollow.Username, http.StatusFound, alert)
 		return
 	}
 
 	err = fc.fs.Delete(follow.ID)
 	if err != nil {
-		// TODO add persistent alert
-		http.Redirect(w, r, "/"+userToUnfollow.Username, http.StatusFound)
+		alert := views.Alert{
+			Level:   "danger",
+			Message: err.Error(),
+		}
+		views.RedirectWithAlert(w, r, "/"+userToUnfollow.Username, http.StatusFound, alert)
 		return
 	}
 

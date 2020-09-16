@@ -72,10 +72,7 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 	var vd views.Data
 	params := mux.Vars(r)
 
-	username, prs := params["user"]
-	if prs == false {
-		// TODO add some logging
-	}
+	username, _ := params["user"]
 
 	// check if user with such an username exists, get user
 	user, err := qc.us.FindByUsername(username)
