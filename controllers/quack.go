@@ -34,7 +34,12 @@ func NewQuackController(qs models.QuackService, us models.UserService, fs models
 
 // GetHome handles GET /home
 func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
-	qc.HomeView.Render(w, r, nil)
+	user := context.GetUser(r.Context())
+
+	var d views.Data
+	d.User = user
+
+	qc.HomeView.Render(w, r, d)
 }
 
 // NewQuack handles POST /home (i.e. posting new quacks)
@@ -71,6 +76,9 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 	// read username from the url
 	var vd views.Data
 	params := mux.Vars(r)
+
+	user := context.GetUser(r.Context())
+	vd.User = user
 
 	username, _ := params["user"]
 

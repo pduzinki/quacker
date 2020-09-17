@@ -33,20 +33,12 @@ func NewUserController(us models.UserService) *UserController {
 
 // GetWelcome handles GET /
 func (uc *UserController) GetWelcome(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("remember_token")
-	if err != nil {
-		uc.WelcomeView.Render(w, r, nil)
-		return
+	user := context.GetUser(r.Context())
+	if user != nil {
+		http.Redirect(w, r, "/home", http.StatusFound)
 	}
 
-	_, err = uc.us.FindByRememberToken(cookie.Value)
-	if err != nil {
-		uc.WelcomeView.Render(w, r, nil)
-		return
-	}
-
-	// user is logged in, redirect to "/home"
-	http.Redirect(w, r, "/home", http.StatusFound)
+	uc.WelcomeView.Render(w, r, nil)
 }
 
 // GetLogin handles GET /login

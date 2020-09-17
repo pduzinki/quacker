@@ -26,6 +26,7 @@ type Profile struct {
 // Data is a helper structure for rendering data on a page
 type Data struct {
 	Alert *Alert
+	User  *models.User
 	Yield interface{}
 }
 

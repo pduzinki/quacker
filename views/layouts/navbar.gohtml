@@ -1,27 +1,23 @@
 {{define "navbar"}}
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/login">Log in</a></li>
-            <li><a href="/signup">Sign up</a></li>
-            <li>{{template "logout"}}</li>
-        </ul>
-    </nav>
+    {{if .User}}
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/{{.User.Username}}">Profile</li>
+                <li>{{template "logout"}}</li>
+            </ul>
+        </nav>
+    {{else}}
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/login">Log in</a></li>
+                <li><a href="/signup">Sign up</a></li>
+            </ul>
+        </nav>
+    {{end}}
 {{end}}
 
-
-{{define "usernavbar"}}
-    <nav>
-        <li><a href="/home">Home</a></li>
-        {{/* <li><a href="/">Explore</a></li> */}}
-        {{/* <li><a href="/">Notifications</a></li> */}}
-        {{/* <li><a href="/">Messages</a></li> */}}
-        {{/* <li><a href="/">Bookmarks</a></li> */}}
-        {{/* <li><a href="/">Lists</a></li> */}}
-        <li><a href="/">Profile</a></li>
-        <li>{{template "logout"}}</li>
-    </nav>
-{{end}}
 
 {{define "logout"}}
     <form action="/logout" method="POST">
