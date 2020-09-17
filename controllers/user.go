@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"quacker/context"
 	"quacker/models"
@@ -154,6 +155,27 @@ func (uc *UserController) signIn(w http.ResponseWriter, u *models.User) error {
 
 	http.SetCookie(w, &cookie)
 	return nil
+}
+
+// PostLogout handles POST /logout
+func (uc *UserController) PostLogout(w http.ResponseWriter, r *http.Request) {
+	cookie := http.Cookie{
+		Name:     "remember_token",
+		Value:    "",
+		Expires:  time.Now(),
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &cookie)
+
+	user := context.GetUser(r.Context())
+	rememberToken, _ := token.GenerateRememberToken()
+	user.RememberToken = rememberToken
+	uc.us.Update(user)
+	alert := views.Alert{
+		Level:   "success",
+		Message: "You logged out.",
+	}
+	views.RedirectWithAlert(w, r, "/", http.StatusFound, alert)
 }
 
 // CookieTest handles GET /cookietest, this function is for testing only

@@ -46,6 +46,7 @@ func main() {
 	r.HandleFunc("/login", userC.PostLogin).Methods("POST")
 	r.HandleFunc("/signup", userC.GetSignup).Methods("GET")
 	r.HandleFunc("/signup", userC.PostSignup).Methods("POST")
+	r.HandleFunc("/logout", userC.PostLogout).Methods("POST")
 	r.HandleFunc("/home", userRequireMw.ApplyFn(quackC.GetHome)).Methods("GET")
 	r.HandleFunc("/home", userRequireMw.ApplyFn(quackC.NewQuack)).Methods("POST")
 	r.HandleFunc("/cookietest", userC.CookieTest).Methods("GET")
