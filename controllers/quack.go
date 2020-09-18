@@ -77,8 +77,8 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 	var vd views.Data
 	params := mux.Vars(r)
 
-	user := context.GetUser(r.Context())
-	vd.User = user
+	loggedUser := context.GetUser(r.Context())
+	vd.User = loggedUser
 
 	username, _ := params["user"]
 
@@ -97,18 +97,12 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	loggedUser := &models.User{}
-	cookie, _ := r.Cookie("remember_token")
-	if cookie != nil {
-		loggedUser, _ = qc.us.FindByRememberToken(cookie.Value)
-	}
-
 	var self bool
 	var followed bool
-	if loggedUser.ID == user.ID {
-		self = true
-	} else {
-		if loggedUser != nil {
+	if loggedUser != nil {
+		if loggedUser.ID == user.ID {
+			self = true
+		} else {
 			// TODO replace with call to FindByIDs
 
 			follows, _ := qc.fs.FindByUserID(loggedUser.ID)
