@@ -103,14 +103,9 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 		if loggedUser.ID == user.ID {
 			self = true
 		} else {
-			// TODO replace with call to FindByIDs
-
-			follows, _ := qc.fs.FindByUserID(loggedUser.ID)
-
-			for _, follow := range follows {
-				if follow.FollowsUserID == user.ID {
-					followed = true
-				}
+			_, err := qc.fs.FindByIDs(loggedUser.ID, user.ID)
+			if err == nil {
+				followed = true
 			}
 		}
 	}
