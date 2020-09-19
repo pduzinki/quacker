@@ -45,12 +45,14 @@ func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
 // NewQuack handles POST /home (i.e. posting new quacks)
 func (qc *QuackController) NewQuack(w http.ResponseWriter, r *http.Request) {
 	var form quackForm
-	var d views.Data
 
 	err := parseForm(r, &form)
 	if err != nil {
-		d.SetAlert(err)
-		qc.HomeView.Render(w, r, d)
+		alert := views.Alert{
+			Level:   "danger",
+			Message: err.Error(),
+		}
+		views.RedirectWithAlert(w, r, "/home", http.StatusFound, alert)
 		return
 	}
 
@@ -63,12 +65,15 @@ func (qc *QuackController) NewQuack(w http.ResponseWriter, r *http.Request) {
 
 	err = qc.qs.Create(&quack)
 	if err != nil {
-		d.SetAlert(err)
-		qc.HomeView.Render(w, r, d)
+		alert := views.Alert{
+			Level:   "danger",
+			Message: err.Error(),
+		}
+		views.RedirectWithAlert(w, r, "/home", http.StatusFound, alert)
 		return
 	}
 
-	qc.HomeView.Render(w, r, d)
+	http.Redirect(w, r, "/home", http.StatusFound)
 }
 
 // GetProfile handles GET /{username}
