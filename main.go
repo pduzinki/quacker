@@ -56,5 +56,10 @@ func main() {
 
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", quackC.GetProfile).Methods("GET")
 
+	// styles
+	stylesHandler := http.FileServer(http.Dir("./styles/"))
+	stylesHandler = http.StripPrefix("/styles/", stylesHandler)
+	r.PathPrefix("/styles/").Handler(stylesHandler)
+
 	http.ListenAndServe(":3000", userLoggedMw.Apply(r))
 }
