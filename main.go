@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -57,9 +58,8 @@ func main() {
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", quackC.GetProfile).Methods("GET")
 
 	// styles
-	stylesHandler := http.FileServer(http.Dir("./styles/"))
-	stylesHandler = http.StripPrefix("/styles/", stylesHandler)
-	r.PathPrefix("/styles/").Handler(stylesHandler)
+	r.PathPrefix("/styles/").Handler(http.StripPrefix("/styles/", http.FileServer(http.Dir("./styles/"))))
 
+	log.Println("Quacker is now working on port 3000")
 	http.ListenAndServe(":3000", userLoggedMw.Apply(r))
 }
