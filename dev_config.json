@@ -1,0 +1,12 @@
+{
+    "dbConfig":{
+        "dialect":"postgres",
+        "host":"localhost",
+        "port":5432,
+        "user":"postgres",
+        "password":"123",
+        "name":"quacker_dev"
+    },
+    "passwordPepper":"not-a-secret-pepper",
+    "hmacKey":"not-a-secret-hmac-key"
+}

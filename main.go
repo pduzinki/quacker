@@ -16,7 +16,7 @@ func main() {
 	dbCfg := cfg.DbConfig
 
 	// services
-	services := models.NewServices(dbCfg.Dialect(), dbCfg.ConnectionInfo(),
+	services := models.NewServices(dbCfg.GetDialect(), dbCfg.GetConnectionInfo(),
 		cfg.PasswordPepper, cfg.HmacKey)
 	defer services.Close()
 	// services.RebuildDatabase()
