@@ -2,6 +2,10 @@
     <h2>Home</h2>
     {{template "newQuackForm"}}
 
+    {{range .Yield.Quacks}}
+            {{template "quack" .}}
+    {{end}}
+
 {{end}}
 
 {{define "newQuackForm"}}

@@ -17,6 +17,7 @@ type Quack struct {
 type QuackDB interface {
 	FindByID(id uint) (*Quack, error)
 	FindByUserID(id uint) ([]Quack, error)
+	FindByMultipleUserIDs(ids []uint) ([]Quack, error)
 	// TODO perhaps add later: FindByUserIDWithLimit(id, limit, offset uint) ([]Quack, error)
 
 	Create(quack *Quack) error
@@ -79,6 +80,21 @@ func (qv *quackValidator) FindByUserID(id uint) ([]Quack, error) {
 	return qv.QuackDB.FindByUserID(id)
 }
 
+func (qv *quackValidator) FindByMultipleUserIDs(ids []uint) ([]Quack, error) {
+	for _, id := range ids {
+		q := Quack{}
+		q.UserID = id
+
+		err := runQuackValidatorFuncs(&q,
+			qv.userIDGreaterThanZero)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return qv.QuackDB.FindByMultipleUserIDs(ids)
+}
+
 func (qv *quackValidator) Create(quack *Quack) error {
 	err := runQuackValidatorFuncs(quack,
 		qv.userIDGreaterThanZero,
@@ -129,6 +145,18 @@ func (qg *quackGorm) FindByUserID(id uint) ([]Quack, error) {
 
 	err := qg.db.Model(Quack{}).Select("quacks.id, quacks.created_at, quacks.text, users.username").
 		Joins("inner join users on quacks.user_id = users.id").Where("user_id = ?", id).Order("id desc").Find(&q).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return q, nil
+}
+
+func (qg *quackGorm) FindByMultipleUserIDs(ids []uint) ([]Quack, error) {
+	q := make([]Quack, 1)
+
+	err := qg.db.Model(Quack{}).Select("quacks.id, quacks.created_at, quacks.text, users.username").
+		Joins("inner join users on quacks.user_id = users.id").Where("user_id IN (?)", ids).Order("id desc").Find(&q).Error
 	if err != nil {
 		return nil, err
 	}

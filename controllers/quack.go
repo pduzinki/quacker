@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -22,7 +23,7 @@ type QuackController struct {
 // NewQuackController creates new quack controller
 func NewQuackController(qs models.QuackService, us models.UserService, fs models.FollowService) *QuackController {
 	qc := QuackController{
-		HomeView: views.NewView("views/quack/home.gohtml"),
+		HomeView: views.NewView("views/quack/home.gohtml", "views/quack/quack.gohtml"),
 		ProfileView: views.NewView("views/quack/profile.gohtml",
 			"views/quack/quack.gohtml",
 			"views/follow/follow.gohtml",
@@ -41,12 +42,37 @@ func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
 
 	var d views.Data
 	d.User = user
+	d.Yield = views.Profile{}
 
-	// get loggedUser quacks
-	// get followed users
-	// get followed users quacks
-	// sort all those quacks by date
-	// render them
+	// get all followed users
+	follows, err := qc.fs.FindByUserID(user.ID)
+	if err != nil {
+		d.SetAlert(err)
+		qc.HomeView.Render(w, r, d)
+		return
+	}
+
+	// extract followed users IDs
+	followsIDs := make([]uint, len(follows), len(follows))
+	for i, f := range follows {
+		followsIDs[i] = f.FollowsUserID
+	}
+	log.Println("fine")
+
+	// add yourself to IDs, to see quack by yourself on the quack board
+	followsIDs = append(followsIDs, user.ID)
+
+	// query db for all quacks
+	quacks, err := qc.qs.FindByMultipleUserIDs(followsIDs)
+	if err != nil {
+		d.SetAlert(err)
+		qc.HomeView.Render(w, r, d)
+		return
+	}
+
+	d.Yield = views.Profile{
+		Quacks: quacks,
+	}
 
 	qc.HomeView.Render(w, r, d)
 }
