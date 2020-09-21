@@ -1,0 +1,19 @@
+{{/*
+TODO
+how quack should look like:
+    username ---- how long ago it was posted
+    quack content
+    comments -- requacks -- likes
+ */}}
+
+{{define "quack"}}
+    <div>
+        <p>
+        ----------------------------------------------------------------<br>
+        {{.Username}} {{.CreatedAt}}<br>
+        {{.Text}}<br>
+        ----------------------------------------------------------------<br>
+        </p>
+    </div>
+{{end}}
+

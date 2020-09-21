@@ -22,11 +22,14 @@ type QuackController struct {
 // NewQuackController creates new quack controller
 func NewQuackController(qs models.QuackService, us models.UserService, fs models.FollowService) *QuackController {
 	qc := QuackController{
-		HomeView:    views.NewView("views/quack/home.gohtml"),
-		ProfileView: views.NewView("views/quack/profile.gohtml", "views/follow/follow.gohtml", "views/follow/unfollow.gohtml"),
-		qs:          qs,
-		us:          us,
-		fs:          fs,
+		HomeView: views.NewView("views/quack/home.gohtml"),
+		ProfileView: views.NewView("views/quack/profile.gohtml",
+			"views/quack/quack.gohtml",
+			"views/follow/follow.gohtml",
+			"views/follow/unfollow.gohtml"),
+		qs: qs,
+		us: us,
+		fs: fs,
 	}
 
 	return &qc
@@ -38,6 +41,12 @@ func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
 
 	var d views.Data
 	d.User = user
+
+	// get loggedUser quacks
+	// get followed users
+	// get followed users quacks
+	// sort all those quacks by date
+	// render them
 
 	qc.HomeView.Render(w, r, d)
 }

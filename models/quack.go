@@ -8,8 +8,9 @@ import (
 // Quack represents quack data in the database
 type Quack struct {
 	gorm.Model
-	UserID uint   `gorm:"not_null;index"`
-	Text   string `gorm:"not null"`
+	UserID   uint   `gorm:"not_null;index"`
+	Username string `gorm:"-"`
+	Text     string `gorm:"not null"`
 }
 
 // QuackDB is an interface for interacting with quack data in the database
@@ -126,7 +127,8 @@ func (qg *quackGorm) FindByID(id uint) (*Quack, error) {
 func (qg *quackGorm) FindByUserID(id uint) ([]Quack, error) {
 	q := make([]Quack, 1)
 
-	err := qg.db.Order("id desc").Where("user_id = ?", id).Find(&q).Error
+	err := qg.db.Model(Quack{}).Select("quacks.id, quacks.created_at, quacks.text, users.username").
+		Joins("inner join users on quacks.user_id = users.id").Where("user_id = ?", id).Order("id desc").Find(&q).Error
 	if err != nil {
 		return nil, err
 	}

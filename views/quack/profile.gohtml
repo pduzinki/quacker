@@ -17,13 +17,7 @@
 
     <p>{{.Yield.Username}}'s recent quacks:</p>
     {{range .Yield.Quacks}}
-        <div>
-            <p>
-            ----------------<br>
-            {{.Text}}<br>
-            ----------------<br>
-            </p>
-        </div>
+        {{template "quack" .}}
     {{end}}
 {{else}}
     <p>{{.Yield.Username}} doesn't exist.</p>
