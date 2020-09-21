@@ -1,26 +1,24 @@
 {{define "yield"}}
+    {{if .Yield.Exists}}
+        <p>This is a {{.Yield.Username}} profile page.</p>
+        <p>About:</p>
+        <p>{{.Yield.About}}</p>
 
-{{if .Yield.Exists}}
-    <p>This is a {{.Yield.Username}} profile page.</p>
-    <p>About:</p>
-    <p>{{.Yield.About}}</p>
-
-    {{if .Yield.Self}}
-    {{/* TODO add 'set profile' button later, for now, no button in here */}}
-    {{else}}
-        {{if .Yield.Followed}}
-            {{template "unfollow" .}}
+        {{if .Yield.Self}}
+        {{/* TODO add 'set profile' button later, for now, no button in here */}}
         {{else}}
-            {{template "follow" .}}
+            {{if .Yield.Followed}}
+                {{template "unfollow" .}}
+            {{else}}
+                {{template "follow" .}}
+            {{end}}
         {{end}}
-    {{end}}
 
-    <p>{{.Yield.Username}}'s recent quacks:</p>
-    {{range .Yield.Quacks}}
-        {{template "quack" .}}
+        <p>{{.Yield.Username}}'s recent quacks:</p>
+        {{range .Yield.Quacks}}
+            {{template "quack" .}}
+        {{end}}
+    {{else}}
+        <p>{{.Yield.Username}} doesn't exist.</p>
     {{end}}
-{{else}}
-    <p>{{.Yield.Username}} doesn't exist.</p>
-{{end}}
-
 {{end}}
