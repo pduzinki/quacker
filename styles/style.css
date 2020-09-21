@@ -2,3 +2,7 @@ body {
     font-size: 16px;
     font-family: 'Roboto Mono', monospace;
    }
+
+footer {
+    font-size: 12px;
+}
