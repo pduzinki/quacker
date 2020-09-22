@@ -1,6 +1,6 @@
 ## About:
 This is a simple 'twitter clone' web app, but instead of tweeting, it's quacking! It's meant to be
-a learning exercise for me, and hopefully for you as well.
+a learning exercise for me, and hopefully for you as well. New features and improvements to come soon...
 
 ## Requirements:
 * Go v1.14.2 (or higher)
