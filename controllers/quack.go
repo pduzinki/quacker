@@ -59,7 +59,7 @@ func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("fine")
 
-	// add yourself to IDs, to see quack by yourself on the quack board
+	// add yourself to IDs, to see your quacks on the quack board
 	followsIDs = append(followsIDs, user.ID)
 
 	// query db for all quacks
