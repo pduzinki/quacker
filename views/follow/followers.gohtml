@@ -1,3 +1,6 @@
 {{define "yield"}}
 Followers:
+    {{range .Yield}}
+        {{template "followUser" .}}
+    {{end}}
 {{end}}

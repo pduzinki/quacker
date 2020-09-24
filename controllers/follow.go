@@ -23,8 +23,8 @@ func NewFollowController(fs models.FollowService, us models.UserService) *Follow
 	return &FollowController{
 		fs:            fs,
 		us:            us,
-		followingView: views.NewView("views/follow/following.gohtml"),
-		followersView: views.NewView("views/follow/followers.gohtml"),
+		followingView: views.NewView("views/follow/following.gohtml", "views/follow/followuser.gohtml"),
+		followersView: views.NewView("views/follow/followers.gohtml", "views/follow/followuser.gohtml"),
 	}
 }
 
@@ -134,6 +134,27 @@ func (fc *FollowController) Following(w http.ResponseWriter, r *http.Request) {
 
 // Followers handles GET /{username}/followers
 func (fc *FollowController) Followers(w http.ResponseWriter, r *http.Request) {
+	loggedUser := context.GetUser(r.Context())
 
-	fc.followersView.Render(w, r, nil)
+	var d views.Data
+	d.User = loggedUser
+
+	vars := mux.Vars(r)
+	username, _ := vars["user"]
+
+	user, err := fc.us.FindByUsername(username)
+	if err != nil {
+		// TODO
+		return
+	}
+
+	follows, err := fc.fs.FindByFollowsUserID(user.ID)
+	if err != nil {
+		// TODO
+		return
+	}
+
+	d.Yield = follows
+
+	fc.followersView.Render(w, r, d)
 }
