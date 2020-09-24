@@ -17,6 +17,7 @@ type Follow struct {
 type FollowDB interface {
 	FindByID(id uint) (*Follow, error)
 	FindByUserID(id uint) ([]Follow, error)
+	FindByFollowsUserID(id uint) ([]Follow, error)
 	FindByIDs(loggedUserID, followedUserID uint) (*Follow, error)
 
 	Create(follow *Follow) error
@@ -77,6 +78,19 @@ func (fv *followValidator) FindByUserID(id uint) ([]Follow, error) {
 	}
 
 	return fv.FollowDB.FindByUserID(id)
+}
+
+func (fv *followValidator) FindByFollowsUserID(id uint) ([]Follow, error) {
+	follow := Follow{}
+	follow.FollowsUserID = id
+
+	err := runFollowValidatorFuncs(&follow,
+		fv.followsUserIDGraterThanZero)
+	if err != nil {
+		return nil, err
+	}
+
+	return fv.FollowDB.FindByFollowsUserID(id)
 }
 
 func (fv *followValidator) FindByIDs(loggedUserID, followedUserID uint) (*Follow, error) {
@@ -146,11 +160,27 @@ func (fg *followGorm) FindByID(id uint) (*Follow, error) {
 func (fg *followGorm) FindByUserID(id uint) ([]Follow, error) {
 	follows := make([]Follow, 1)
 
-	// err := fg.db.Where("user_id = ?", id).Find(&follows).Error
 	err := fg.db.Model(Follow{}).
 		Select("follows.id, follows.user_id, follows.follows_user_id, users.username").
 		Joins("inner join users on follows.follows_user_id = users.id").
 		Where("user_id = ?", id).
+		Find(&follows).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, ErrRecordNotFound
+	} else if err != nil {
+		return nil, err
+	}
+
+	return follows, nil
+}
+
+func (fg *followGorm) FindByFollowsUserID(id uint) ([]Follow, error) {
+	follows := make([]Follow, 1)
+
+	err := fg.db.Model(Follow{}).
+		Select("follows.id, follows.user_id, follows.follows_user_id, users.username").
+		Joins("inner join users on follows.user_id = users.id").
+		Where("follows_user_id = ?", id).
 		Find(&follows).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, ErrRecordNotFound
