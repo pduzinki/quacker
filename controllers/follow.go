@@ -117,18 +117,22 @@ func (fc *FollowController) Following(w http.ResponseWriter, r *http.Request) {
 
 	user, err := fc.us.FindByUsername(username)
 	if err != nil {
-		// TODO
+		d.SetAlert(err)
+		fc.followingView.Render(w, r, d)
 		return
 	}
 
 	follows, err := fc.fs.FindByUserID(user.ID)
-	if err != nil {
-		// TODO
+	if err == models.ErrRecordNotFound {
+		fc.followingView.Render(w, r, d)
+		return
+	} else if err != nil {
+		d.SetAlert(err)
+		fc.followingView.Render(w, r, d)
 		return
 	}
 
 	d.Yield = follows
-
 	fc.followingView.Render(w, r, d)
 }
 
@@ -144,13 +148,18 @@ func (fc *FollowController) Followers(w http.ResponseWriter, r *http.Request) {
 
 	user, err := fc.us.FindByUsername(username)
 	if err != nil {
-		// TODO
+		d.SetAlert(err)
+		fc.followersView.Render(w, r, d)
 		return
 	}
 
 	follows, err := fc.fs.FindByFollowsUserID(user.ID)
-	if err != nil {
-		// TODO
+	if err == models.ErrRecordNotFound {
+		fc.followersView.Render(w, r, d)
+		return
+	} else if err != nil {
+		d.SetAlert(err)
+		fc.followersView.Render(w, r, d)
 		return
 	}
 
