@@ -1,6 +1,17 @@
 {{define "yield"}}
 Following:
     {{range .Yield}}
-        <p>{{.Username}}</p>
+        {{template "followingUser" .}}
     {{end}}
+{{end}}
+
+
+{{define "followingUser"}}
+    <div>
+        <p>
+        ----------------------------------------------------------------<br>
+        <a href="/{{.Username}}">{{.Username}}</a><br>
+        ----------------------------------------------------------------<br>
+        </p>
+    </div>
 {{end}}
