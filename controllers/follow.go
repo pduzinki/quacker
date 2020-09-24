@@ -12,15 +12,19 @@ import (
 
 // FollowController is a controller struct responsible for handling follow resources
 type FollowController struct {
-	fs models.FollowService
-	us models.UserService
+	fs            models.FollowService
+	us            models.UserService
+	followingView *views.View
+	followersView *views.View
 }
 
 // NewFollowController creates new follow controller
 func NewFollowController(fs models.FollowService, us models.UserService) *FollowController {
 	return &FollowController{
-		fs: fs,
-		us: us,
+		fs:            fs,
+		us:            us,
+		followingView: views.NewView("views/follow/following.gohtml"),
+		followersView: views.NewView("views/follow/followers.gohtml"),
 	}
 }
 
@@ -99,4 +103,37 @@ func (fc *FollowController) UnfollowUser(w http.ResponseWriter, r *http.Request)
 	}
 
 	http.Redirect(w, r, "/"+userToUnfollow.Username, http.StatusFound)
+}
+
+// Following handles GET /{username}/following
+func (fc *FollowController) Following(w http.ResponseWriter, r *http.Request) {
+	loggedUser := context.GetUser(r.Context())
+
+	var d views.Data
+	d.User = loggedUser
+
+	vars := mux.Vars(r)
+	username, _ := vars["user"]
+
+	user, err := fc.us.FindByUsername(username)
+	if err != nil {
+		// TODO
+		return
+	}
+
+	follows, err := fc.fs.FindByUserID(user.ID)
+	if err != nil {
+		// TODO
+		return
+	}
+
+	d.Yield = follows
+
+	fc.followingView.Render(w, r, d)
+}
+
+// Followers handles GET /{username}/followers
+func (fc *FollowController) Followers(w http.ResponseWriter, r *http.Request) {
+
+	fc.followersView.Render(w, r, nil)
 }

@@ -8,8 +8,9 @@ import (
 // Follow represents 'follow' relation in the database
 type Follow struct {
 	gorm.Model
-	UserID        uint `gorm:"not_null;index:idx_member"`
-	FollowsUserID uint `gorm:"not_null;index:idx_member"`
+	UserID        uint   `gorm:"not_null;index:idx_member"`
+	FollowsUserID uint   `gorm:"not_null;index:idx_member"`
+	Username      string `gorm:"-"`
 }
 
 // FollowDB is an inferface for interacting with follow data in the database
@@ -145,7 +146,12 @@ func (fg *followGorm) FindByID(id uint) (*Follow, error) {
 func (fg *followGorm) FindByUserID(id uint) ([]Follow, error) {
 	follows := make([]Follow, 1)
 
-	err := fg.db.Where("user_id = ?", id).Find(&follows).Error
+	// err := fg.db.Where("user_id = ?", id).Find(&follows).Error
+	err := fg.db.Model(Follow{}).
+		Select("follows.id, follows.user_id, follows.follows_user_id, users.username").
+		Joins("inner join users on follows.follows_user_id = users.id").
+		Where("user_id = ?", id).
+		Find(&follows).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, ErrRecordNotFound
 	} else if err != nil {

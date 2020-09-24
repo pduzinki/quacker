@@ -1,7 +1,8 @@
 {{define "yield"}}
     {{if .Yield.Exists}}
-        <p>This is a {{.Yield.Username}} profile page.</p>
+        <p>This is {{.Yield.Username}} profile page.</p>
         <p>About:</p>
+        <p>Following Followers</p>
         <p>{{.Yield.About}}</p>
 
         {{if .Yield.Self}}
