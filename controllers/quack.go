@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 
@@ -15,6 +16,7 @@ import (
 type QuackController struct {
 	HomeView    *views.View
 	ProfileView *views.View
+	QuackView   *views.View
 	qs          models.QuackService
 	us          models.UserService
 	fs          models.FollowService
@@ -28,9 +30,10 @@ func NewQuackController(qs models.QuackService, us models.UserService, fs models
 			"views/quack/quack.gohtml",
 			"views/follow/follow.gohtml",
 			"views/follow/unfollow.gohtml"),
-		qs: qs,
-		us: us,
-		fs: fs,
+		QuackView: views.NewView("views/quack/quackpage.gohtml"),
+		qs:        qs,
+		us:        us,
+		fs:        fs,
 	}
 
 	return &qc
@@ -168,4 +171,38 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	// render page
 	qc.ProfileView.Render(w, r, vd)
+}
+
+// GetQuack handles GET /{user}/quacks/{id}
+func (qc *QuackController) GetQuack(w http.ResponseWriter, r *http.Request) {
+	loggedUser := context.GetUser(r.Context())
+	vars := mux.Vars(r)
+
+	var d views.Data
+	d.User = loggedUser
+
+	username, _ := vars["user"]
+	id64, _ := strconv.ParseUint(vars["id"], 10, 32)
+	id := uint(id64)
+
+	user, err := qc.us.FindByUsername(username)
+	if err != nil {
+		user = &models.User{}
+	}
+
+	quack, err := qc.qs.FindByID(id)
+	if err != nil {
+		d.SetAlert(err)
+		qc.QuackView.Render(w, r, d)
+		return
+	}
+
+	if quack.UserID != user.ID {
+		url := "/" + quack.Username + "/quack/" + strconv.Itoa(int(quack.ID))
+		http.Redirect(w, r, url, http.StatusFound)
+		return
+	}
+
+	d.Yield = quack
+	qc.QuackView.Render(w, r, d)
 }

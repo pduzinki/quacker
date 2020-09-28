@@ -130,7 +130,11 @@ func newQuackGorm(db *gorm.DB) *quackGorm {
 func (qg *quackGorm) FindByID(id uint) (*Quack, error) {
 	q := Quack{}
 
-	err := qg.db.Where("id = ?", id).First(&q).Error
+	err := qg.db.Model(Quack{}).
+		Select("quacks.id, quacks.created_at, quacks.text, quacks.user_id, users.username").
+		Joins("inner join users on quacks.user_id = users.id").
+		Where("quacks.id = ?", id).
+		First(&q).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, ErrRecordNotFound
 	} else if err != nil {
