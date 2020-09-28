@@ -147,8 +147,12 @@ func (qg *quackGorm) FindByID(id uint) (*Quack, error) {
 func (qg *quackGorm) FindByUserID(id uint) ([]Quack, error) {
 	q := make([]Quack, 1)
 
-	err := qg.db.Model(Quack{}).Select("quacks.id, quacks.created_at, quacks.text, users.username").
-		Joins("inner join users on quacks.user_id = users.id").Where("user_id = ?", id).Order("id desc").Find(&q).Error
+	err := qg.db.Model(Quack{}).
+		Select("quacks.id, quacks.created_at, quacks.text, users.username").
+		Joins("inner join users on quacks.user_id = users.id").
+		Where("user_id = ?", id).
+		Order("id desc").
+		Find(&q).Error
 	if err != nil {
 		return nil, err
 	}
@@ -159,8 +163,12 @@ func (qg *quackGorm) FindByUserID(id uint) ([]Quack, error) {
 func (qg *quackGorm) FindByMultipleUserIDs(ids []uint) ([]Quack, error) {
 	q := make([]Quack, 1)
 
-	err := qg.db.Model(Quack{}).Select("quacks.id, quacks.created_at, quacks.text, users.username").
-		Joins("inner join users on quacks.user_id = users.id").Where("user_id IN (?)", ids).Order("id desc").Find(&q).Error
+	err := qg.db.Model(Quack{}).
+		Select("quacks.id, quacks.created_at, quacks.text, users.username").
+		Joins("inner join users on quacks.user_id = users.id").
+		Where("user_id IN (?)", ids).
+		Order("id desc").
+		Find(&q).Error
 	if err != nil {
 		return nil, err
 	}
