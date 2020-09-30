@@ -31,11 +31,11 @@ func NewFollowController(fs models.FollowService, us models.UserService) *Follow
 // FollowUser handles POST /{username}/follow
 func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 	loggedUser := context.GetUser(r.Context())
-	params := mux.Vars(r)
+	vars := mux.Vars(r)
 
 	_ = loggedUser
 
-	username, _ := params["user"]
+	username, _ := vars["user"]
 
 	userToFollow, err := fc.us.FindByUsername(username)
 	if err != nil {
@@ -68,9 +68,9 @@ func (fc *FollowController) FollowUser(w http.ResponseWriter, r *http.Request) {
 // UnfollowUser handles POST /{username}/unfollow
 func (fc *FollowController) UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	loggedUser := context.GetUser(r.Context())
-	params := mux.Vars(r)
+	vars := mux.Vars(r)
 
-	username, _ := params["user"]
+	username, _ := vars["user"]
 
 	userToUnfollow, err := fc.us.FindByUsername(username)
 	if err != nil {

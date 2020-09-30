@@ -41,14 +41,14 @@ func NewQuackController(qs models.QuackService, us models.UserService, fs models
 
 // GetHome handles GET /home
 func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
-	user := context.GetUser(r.Context())
+	loggedUser := context.GetUser(r.Context())
 
 	var d views.Data
-	d.User = user
+	d.User = loggedUser
 	d.Yield = views.Profile{}
 
 	// get all followed users
-	follows, err := qc.fs.FindByUserID(user.ID)
+	follows, err := qc.fs.FindByUserID(loggedUser.ID)
 	if err != nil {
 		d.SetAlert(err)
 		qc.HomeView.Render(w, r, d)
@@ -63,7 +63,7 @@ func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
 	log.Println("fine")
 
 	// add yourself to IDs, to see your quacks on the quack board
-	followsIDs = append(followsIDs, user.ID)
+	followsIDs = append(followsIDs, loggedUser.ID)
 
 	// query db for all quacks
 	quacks, err := qc.qs.FindByMultipleUserIDs(followsIDs)
@@ -73,8 +73,14 @@ func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	vQuacks := make([]views.Quack, len(quacks), len(quacks))
+	for i, q := range quacks {
+		vQuacks[i].Quack = q
+		vQuacks[i].BelongsToLoggedUser = (loggedUser.Username == q.Username)
+	}
+
 	d.Yield = views.Profile{
-		Quacks: quacks,
+		Quacks: vQuacks,
 	}
 
 	qc.HomeView.Render(w, r, d)
@@ -118,12 +124,12 @@ func (qc *QuackController) NewQuack(w http.ResponseWriter, r *http.Request) {
 func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 	// read username from the url
 	var vd views.Data
-	params := mux.Vars(r)
+	vars := mux.Vars(r)
 
 	loggedUser := context.GetUser(r.Context())
 	vd.User = loggedUser
 
-	username, _ := params["user"]
+	username, _ := vars["user"]
 
 	// check if user with such an username exists, get user
 	user, err := qc.us.FindByUsername(username)
@@ -160,13 +166,19 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	vQuacks := make([]views.Quack, len(quacks), len(quacks))
+	for i, q := range quacks {
+		vQuacks[i].Quack = q
+		vQuacks[i].BelongsToLoggedUser = (loggedUser.Username == q.Username)
+	}
+
 	vd.Yield = views.Profile{
 		Username: user.Username,
 		About:    user.About,
 		Exists:   true,
 		Self:     self,
 		Followed: followed,
-		Quacks:   quacks,
+		Quacks:   vQuacks,
 	}
 
 	// render page
@@ -205,4 +217,33 @@ func (qc *QuackController) GetQuack(w http.ResponseWriter, r *http.Request) {
 
 	d.Yield = quack
 	qc.QuackView.Render(w, r, d)
+}
+
+// DeleteQuack handles POST /{user}/quacks/{id}/delete
+func (qc *QuackController) DeleteQuack(w http.ResponseWriter, r *http.Request) {
+	loggedUser := context.GetUser(r.Context())
+	vars := mux.Vars(r)
+
+	// username := vars["user"]
+	id64, _ := strconv.ParseUint(vars["id"], 10, 32)
+	id := uint(id64)
+
+	quack, err := qc.qs.FindByID(id)
+	if err != nil {
+		// TODO
+		http.Redirect(w, r, "/home", http.StatusFound)
+	}
+
+	if quack.UserID != loggedUser.ID {
+		// TODO
+		http.Redirect(w, r, "/home", http.StatusFound)
+	}
+
+	err = qc.qs.Delete(id)
+	if err != nil {
+		// TODO
+		http.Redirect(w, r, "/home", http.StatusFound)
+	}
+
+	http.Redirect(w, r, "/home", http.StatusFound)
 }

@@ -13,7 +13,16 @@ how quack should look like:
         <a href="/{{.Username}}">{{.Username}}</a> {{.CreatedAt}}<br>
         {{.Text}}<br>
         <a href="/{{.Username}}/quack/{{.ID}}">view more</a><br>
+        {{if .BelongsToLoggedUser}}
+            {{template "deleteQuack" .}}
+        {{end}}
         ----------------------------------------------------------------<br>
         </p>
     </div>
+{{end}}
+
+{{define "deleteQuack"}}
+    <form action="/{{.Username}}/quack/{{.ID}}/delete" method="POST">
+        <button type="deleteQuack">delete</button>
+    </form>
 {{end}}

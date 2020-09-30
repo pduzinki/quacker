@@ -58,6 +58,7 @@ func main() {
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}/followers", userRequireMw.ApplyFn(followC.Followers)).Methods("GET")
 
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}/quack/{id:[0-9]+}", quackC.GetQuack).Methods("GET")
+	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}/quack/{id:[0-9]+}/delete", userRequireMw.ApplyFn(quackC.DeleteQuack)).Methods("POST")
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}", quackC.GetProfile).Methods("GET")
 
 	// styles

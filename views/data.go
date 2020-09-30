@@ -13,6 +13,12 @@ type Alert struct {
 	Message string
 }
 
+// Quack represents data needed for rendering quacks
+type Quack struct {
+	models.Quack
+	BelongsToLoggedUser bool
+}
+
 // Profile wraps data needed for rendering /{username} page
 type Profile struct {
 	Username string
@@ -20,7 +26,7 @@ type Profile struct {
 	Exists   bool
 	Self     bool
 	Followed bool
-	Quacks   []models.Quack
+	Quacks   []Quack
 }
 
 // Data is a helper structure for rendering data on a page
