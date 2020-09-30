@@ -215,7 +215,12 @@ func (qc *QuackController) GetQuack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d.Yield = quack
+	vQuack := views.Quack{
+		Quack:               *quack,
+		BelongsToLoggedUser: (loggedUser.ID == quack.UserID),
+	}
+
+	d.Yield = vQuack
 	qc.QuackView.Render(w, r, d)
 }
 
@@ -224,25 +229,34 @@ func (qc *QuackController) DeleteQuack(w http.ResponseWriter, r *http.Request) {
 	loggedUser := context.GetUser(r.Context())
 	vars := mux.Vars(r)
 
-	// username := vars["user"]
+	// username := vars["user"] // not used
 	id64, _ := strconv.ParseUint(vars["id"], 10, 32)
 	id := uint(id64)
 
 	quack, err := qc.qs.FindByID(id)
 	if err != nil {
-		// TODO
-		http.Redirect(w, r, "/home", http.StatusFound)
+		alert := views.Alert{
+			Level:   "danger",
+			Message: "Quack not found.",
+		}
+		views.RedirectWithAlert(w, r, "/home", http.StatusFound, alert)
 	}
 
 	if quack.UserID != loggedUser.ID {
-		// TODO
-		http.Redirect(w, r, "/home", http.StatusFound)
+		alert := views.Alert{
+			Level:   "danger",
+			Message: "You're not authorized to delete this quack.",
+		}
+		views.RedirectWithAlert(w, r, "/home", http.StatusFound, alert)
 	}
 
 	err = qc.qs.Delete(id)
 	if err != nil {
-		// TODO
-		http.Redirect(w, r, "/home", http.StatusFound)
+		alert := views.Alert{
+			Level:   "danger",
+			Message: "Failed to delete quack.",
+		}
+		views.RedirectWithAlert(w, r, "/home", http.StatusFound, alert)
 	}
 
 	http.Redirect(w, r, "/home", http.StatusFound)

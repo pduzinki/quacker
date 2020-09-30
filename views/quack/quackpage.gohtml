@@ -5,8 +5,17 @@
             ----------------------------------------------------------------<br>
             <a href="/{{.Yield.Username}}">{{.Yield.Username}}</a> {{.Yield.CreatedAt}}<br>
             {{.Yield.Text}}<br>
+            {{if .Yield.BelongsToLoggedUser}}
+                {{template "deleteQuack" .}}
+            {{end}}
             ----------------------------------------------------------------<br>
             </p>
         </div>
     {{end}}
+{{end}}
+
+{{define "deleteQuack"}}
+    <form action="/{{.Yield.Username}}/quack/{{.Yield.ID}}/delete" method="POST">
+        <button type="deleteQuack">delete</button>
+    </form>
 {{end}}
