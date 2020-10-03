@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres" // imports postgres driver
 )
 
 // Follow represents 'follow' relation in the database

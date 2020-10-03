@@ -4,7 +4,6 @@ import (
 	"regexp"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres" // imports postgres driver
 	"golang.org/x/crypto/bcrypt"
 
 	"quacker/hash"
