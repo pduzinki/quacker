@@ -7,6 +7,7 @@ import (
 
 	"quacker/context"
 	"quacker/models"
+	"quacker/redirect"
 	"quacker/token"
 	"quacker/views"
 )
@@ -77,7 +78,11 @@ func (uc *UserController) PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/home", http.StatusFound)
+	url, err := redirect.GetURL(w, r)
+	if err != nil {
+		http.Redirect(w, r, "/home", http.StatusFound)
+	}
+	http.Redirect(w, r, url, http.StatusFound)
 }
 
 // GetSignup handles GET /signup
