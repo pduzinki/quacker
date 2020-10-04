@@ -20,14 +20,14 @@ func (mw *UserRequire) ApplyFn(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("remember_token")
 		if err != nil {
-			redirect.RememberURL(w, r.URL.Path)
+			redirect.SaveURLCookie(w, r.URL.Path)
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 
 		user, err := mw.FindByRememberToken(cookie.Value)
 		if err != nil {
-			redirect.RememberURL(w, r.URL.Path)
+			redirect.SaveURLCookie(w, r.URL.Path)
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}

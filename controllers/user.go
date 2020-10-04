@@ -78,7 +78,7 @@ func (uc *UserController) PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url, err := redirect.GetURL(w, r)
+	url, err := redirect.ReadURLCookie(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/home", http.StatusFound)
 	}
