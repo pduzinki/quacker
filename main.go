@@ -28,7 +28,7 @@ func main() {
 
 	// controllers
 	userC := controllers.NewUserController(services.Us)
-	quackC := controllers.NewQuackController(services.Qs, services.Us, services.Fs)
+	quackC := controllers.NewQuackController(services.Qs, services.Us, services.Fs, services.Hs)
 	followC := controllers.NewFollowController(services.Fs, services.Us)
 	// TODO hashtagC := controllers.NewHashtagC()
 

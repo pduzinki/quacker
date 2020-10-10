@@ -20,10 +20,12 @@ type QuackController struct {
 	qs          models.QuackService
 	us          models.UserService
 	fs          models.FollowService
+	hs          models.HashtagService
 }
 
 // NewQuackController creates new quack controller
-func NewQuackController(qs models.QuackService, us models.UserService, fs models.FollowService) *QuackController {
+func NewQuackController(qs models.QuackService, us models.UserService,
+	fs models.FollowService, hs models.HashtagService) *QuackController {
 	qc := QuackController{
 		HomeView: views.NewView("views/quack/home.gohtml", "views/quack/quack.gohtml"),
 		ProfileView: views.NewView("views/quack/profile.gohtml",
@@ -34,6 +36,7 @@ func NewQuackController(qs models.QuackService, us models.UserService, fs models
 		qs:        qs,
 		us:        us,
 		fs:        fs,
+		hs:        hs,
 	}
 
 	return &qc

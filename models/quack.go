@@ -17,6 +17,7 @@ type QuackDB interface {
 	FindByID(id uint) (*Quack, error)
 	FindByUserID(id uint) ([]Quack, error)
 	FindByMultipleUserIDs(ids []uint) ([]Quack, error)
+	FindByHashtag(hashtag string) ([]Quack, error)
 	// TODO perhaps add later: FindByUserIDWithLimit(id, limit, offset uint) ([]Quack, error)
 
 	Create(quack *Quack) error
@@ -92,6 +93,11 @@ func (qv *quackValidator) FindByMultipleUserIDs(ids []uint) ([]Quack, error) {
 	}
 
 	return qv.QuackDB.FindByMultipleUserIDs(ids)
+}
+
+func (qv *quackValidator) FindByHashtag(hashtag string) ([]Quack, error) {
+	// TODO
+	return nil, nil
 }
 
 func (qv *quackValidator) Create(quack *Quack) error {
@@ -173,6 +179,11 @@ func (qg *quackGorm) FindByMultipleUserIDs(ids []uint) ([]Quack, error) {
 	}
 
 	return q, nil
+}
+
+func (qg *quackGorm) FindByHashtag(hashtag string) ([]Quack, error) {
+	// TODO
+	return nil, nil
 }
 
 func (qg *quackGorm) Create(quack *Quack) error {
