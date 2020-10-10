@@ -4,20 +4,20 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Hashtag ...
+// Hashtag represents hashtag data in the database
 type Hashtag struct {
 	gorm.Model
 	Text    string `gorm:"not_null;index"`
 	QuackID uint   `gorm:"not_null;index"`
 }
 
-// HashtagDB ...
+// HashtagDB is an interface for interacting with hashtag data in the database
 type HashtagDB interface {
 	Create(hashtag *Hashtag) error
 	Delete(id uint) error
 }
 
-// HashtagService ...
+// HashtagService is an interface for interacting with hashtag model
 type HashtagService interface {
 	HashtagDB
 }
@@ -26,7 +26,7 @@ type hashtagService struct {
 	HashtagDB
 }
 
-// NewHashtagService ...
+// NewHashtagService creates HashtagService instance
 func NewHashtagService(db *gorm.DB) HashtagService {
 	hg := newHashtagGorm(db)
 	hv := newHashtagValidator(hg)
@@ -47,13 +47,27 @@ func newHashtagValidator(h HashtagDB) *hashtagValidator {
 }
 
 func (hv *hashtagValidator) Create(hashtag *Hashtag) error {
-	// TODO
-	return nil
+	err := runHashtagValidatorFuncs(hashtag,
+		hv.idGreaterThanZero,
+		hv.quackIDGreaterThanZero,
+		hv.quackExists)
+	if err != nil {
+		return err
+	}
+
+	return hv.HashtagDB.Create(hashtag)
 }
 
 func (hv *hashtagValidator) Delete(id uint) error {
-	// TODO
-	return nil
+	hashtag := Hashtag{}
+	hashtag.ID = id
+
+	err := runHashtagValidatorFuncs(&hashtag, hv.idGreaterThanZero)
+	if err != nil {
+		return err
+	}
+
+	return hv.HashtagDB.Delete(id)
 }
 
 type hashtagGorm struct {
@@ -67,11 +81,12 @@ func newHashtagGorm(db *gorm.DB) *hashtagGorm {
 }
 
 func (hg *hashtagGorm) Create(hashtag *Hashtag) error {
-	// TODO
-	return nil
+	return hg.db.Create(hashtag).Error
 }
 
 func (hg *hashtagGorm) Delete(id uint) error {
-	// TODO
-	return nil
+	hashtag := Hashtag{}
+	hashtag.ID = id
+
+	return hg.db.Delete(hashtag).Error
 }
