@@ -120,6 +120,20 @@ func (qc *QuackController) NewQuack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hashtagStrings := qc.hs.ParseHashtags(quack.Text)
+	for _, hashtagString := range hashtagStrings {
+		hashtag := models.Hashtag{
+			Text:    hashtagString,
+			QuackID: quack.ID,
+		}
+
+		err = qc.hs.Create(&hashtag)
+		if err != nil {
+			log.Println("Failed to create a hashtag.")
+			// unfortunate, but let's keep going
+		}
+	}
+
 	http.Redirect(w, r, "/home", http.StatusFound)
 }
 

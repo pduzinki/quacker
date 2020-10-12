@@ -1,6 +1,8 @@
 package models
 
 import (
+	"regexp"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -20,10 +22,16 @@ type HashtagDB interface {
 // HashtagService is an interface for interacting with hashtag model
 type HashtagService interface {
 	HashtagDB
+	ParseHashtags(text string) []string
 }
 
 type hashtagService struct {
 	HashtagDB
+	hashtagRegex *regexp.Regexp
+}
+
+func (hs hashtagService) ParseHashtags(text string) []string {
+	return hs.hashtagRegex.FindAllString(text, -1)
 }
 
 // NewHashtagService creates HashtagService instance
@@ -32,7 +40,8 @@ func NewHashtagService(db *gorm.DB) HashtagService {
 	hv := newHashtagValidator(hg)
 
 	return hashtagService{
-		HashtagDB: hv,
+		HashtagDB:    hv,
+		hashtagRegex: regexp.MustCompile(`#[^\s#]+`),
 	}
 }
 
@@ -48,7 +57,6 @@ func newHashtagValidator(h HashtagDB) *hashtagValidator {
 
 func (hv *hashtagValidator) Create(hashtag *Hashtag) error {
 	err := runHashtagValidatorFuncs(hashtag,
-		hv.idGreaterThanZero,
 		hv.quackIDGreaterThanZero,
 		hv.quackExists)
 	if err != nil {
