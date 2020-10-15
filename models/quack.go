@@ -96,8 +96,7 @@ func (qv *quackValidator) FindByMultipleUserIDs(ids []uint) ([]Quack, error) {
 }
 
 func (qv *quackValidator) FindByHashtag(hashtag string) ([]Quack, error) {
-	// TODO
-	return nil, nil
+	return qv.QuackDB.FindByHashtag(hashtag)
 }
 
 func (qv *quackValidator) Create(quack *Quack) error {
@@ -182,8 +181,20 @@ func (qg *quackGorm) FindByMultipleUserIDs(ids []uint) ([]Quack, error) {
 }
 
 func (qg *quackGorm) FindByHashtag(hashtag string) ([]Quack, error) {
-	// TODO
-	return nil, nil
+	q := make([]Quack, 1)
+
+	err := qg.db.Model(Quack{}).
+		Select("quacks.id, quacks.created_at, quacks.text, users.username").
+		Joins("inner join users on quacks.user_id = users.id").
+		Joins("inner join hashtags on hashtags.quack_id = quacks.id").
+		Where("hashtags.text = (?)", hashtag).
+		Order("id desc").
+		Find(&q).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return q, nil
 }
 
 func (qg *quackGorm) Create(quack *Quack) error {

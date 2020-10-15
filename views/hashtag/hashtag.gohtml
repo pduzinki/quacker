@@ -1,0 +1,5 @@
+{{define "yield"}}
+    {{range .Yield.Quacks}}
+        {{template "quack" .}}
+    {{end}}
+{{end}}

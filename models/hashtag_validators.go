@@ -1,5 +1,9 @@
 package models
 
+import (
+	"unicode/utf8"
+)
+
 type hashtagValidatorFunc func(*Hashtag) error
 
 func runHashtagValidatorFuncs(hashtag *Hashtag, fns ...hashtagValidatorFunc) error {
@@ -28,5 +32,11 @@ func (hv *hashtagValidator) quackIDGreaterThanZero(hashtag *Hashtag) error {
 
 func (hv *hashtagValidator) quackExists(hashtag *Hashtag) error {
 	// TODO
+	return nil
+}
+
+func (hv *hashtagValidator) truncateHash(hashtag *Hashtag) error {
+	_, i := utf8.DecodeRuneInString(hashtag.Text)
+	hashtag.Text = hashtag.Text[i:]
 	return nil
 }

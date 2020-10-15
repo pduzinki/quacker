@@ -31,7 +31,18 @@ type hashtagService struct {
 }
 
 func (hs hashtagService) ParseHashtags(text string) []string {
-	return hs.hashtagRegex.FindAllString(text, -1)
+	hashtags := hs.hashtagRegex.FindAllString(text, -1)
+	uniqueHashtags := make([]string, 0)
+	keys := make(map[string]bool)
+
+	for _, hashtag := range hashtags {
+		if _, prs := keys[hashtag]; !prs {
+			keys[hashtag] = true
+			uniqueHashtags = append(uniqueHashtags, hashtag)
+		}
+	}
+
+	return uniqueHashtags
 }
 
 // NewHashtagService creates HashtagService instance
@@ -41,7 +52,7 @@ func NewHashtagService(db *gorm.DB) HashtagService {
 
 	return hashtagService{
 		HashtagDB:    hv,
-		hashtagRegex: regexp.MustCompile(`#[^\s#]+`),
+		hashtagRegex: regexp.MustCompile(`#[a-zA-Z0-9_]+`),
 	}
 }
 
@@ -58,6 +69,7 @@ func newHashtagValidator(h HashtagDB) *hashtagValidator {
 func (hv *hashtagValidator) Create(hashtag *Hashtag) error {
 	err := runHashtagValidatorFuncs(hashtag,
 		hv.quackIDGreaterThanZero,
+		hv.truncateHash,
 		hv.quackExists)
 	if err != nil {
 		return err
