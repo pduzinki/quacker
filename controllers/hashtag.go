@@ -27,18 +27,16 @@ func NewHashtagController(qs models.QuackService, hs models.HashtagService) *Has
 	return &hc
 }
 
-// ShowQuacksByHashtag ...
+// ShowQuacksByHashtag handles GET /hashtags/{hashtag}
 func (hc *HashtagC) ShowQuacksByHashtag(w http.ResponseWriter, r *http.Request) {
 	var d views.Data
 	vars := mux.Vars(r)
 
 	loggedUser := context.GetUser(r.Context())
-	if loggedUser == nil {
-		loggedUser = &models.User{}
-	}
 	d.User = loggedUser
 
 	hashtag := vars["hashtag"]
+	// TODO verify that hashtag is proper
 
 	quacks, err := hc.qs.FindByHashtag(hashtag)
 	if err != nil {
@@ -50,7 +48,7 @@ func (hc *HashtagC) ShowQuacksByHashtag(w http.ResponseWriter, r *http.Request) 
 	vQuacks := make([]views.Quack, len(quacks), len(quacks))
 	for i, q := range quacks {
 		vQuacks[i].Quack = q
-		vQuacks[i].BelongsToLoggedUser = (loggedUser.Username == q.Username)
+		vQuacks[i].BelongsToLoggedUser = (loggedUser != nil) && (loggedUser.Username == q.Username)
 	}
 
 	d.Yield = views.Profile{

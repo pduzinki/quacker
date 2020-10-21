@@ -186,7 +186,7 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 	vQuacks := make([]views.Quack, len(quacks), len(quacks))
 	for i, q := range quacks {
 		vQuacks[i].Quack = q
-		vQuacks[i].BelongsToLoggedUser = (loggedUser.Username == q.Username)
+		vQuacks[i].BelongsToLoggedUser = (loggedUser != nil) && (loggedUser.Username == q.Username)
 	}
 
 	vd.Yield = views.Profile{
