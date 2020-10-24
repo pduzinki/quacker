@@ -11,7 +11,7 @@ type Services struct {
 	Us UserService
 	Qs QuackService
 	Fs FollowService
-	Hs HashtagService
+	Hs TagService
 }
 
 // NewServices creates Services instance
@@ -27,7 +27,7 @@ func NewServices(dialect, connectionInfo, passwordPepper, hmacKey string) *Servi
 		Us: NewUserService(db, passwordPepper, hmacKey),
 		Qs: NewQuackService(db),
 		Fs: NewFollowService(db),
-		Hs: NewHashtagService(db),
+		Hs: NewTagService(db),
 	}
 }
 
@@ -38,12 +38,12 @@ func (s *Services) Close() error {
 
 // AutoMigrate performs auto migration for dabatase models
 func (s *Services) AutoMigrate() error {
-	return s.db.AutoMigrate(&User{}, &Quack{}, &Follow{}, &Hashtag{}).Error
+	return s.db.AutoMigrate(&User{}, &Quack{}, &Follow{}, &Tag{}).Error
 }
 
 // RebuildDatabase drops all current database tables and performs auto migration
 func (s *Services) RebuildDatabase() error {
-	err := s.db.DropTableIfExists(&User{}, &Quack{}, &Follow{}, &Hashtag{}).Error
+	err := s.db.DropTableIfExists(&User{}, &Quack{}, &Follow{}, &Tag{}).Error
 	if err != nil {
 		return err
 	}

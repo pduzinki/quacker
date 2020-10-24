@@ -17,28 +17,28 @@ type QuackController struct {
 	HomeView    *views.View
 	ProfileView *views.View
 	QuackView   *views.View
-	HashtagView *views.View
+	TagView     *views.View
 	qs          models.QuackService
 	us          models.UserService
 	fs          models.FollowService
-	hs          models.HashtagService
+	hs          models.TagService
 }
 
 // NewQuackController creates new quack controller
 func NewQuackController(qs models.QuackService, us models.UserService,
-	fs models.FollowService, hs models.HashtagService) *QuackController {
+	fs models.FollowService, hs models.TagService) *QuackController {
 	qc := QuackController{
 		HomeView: views.NewView("views/quack/home.gohtml", "views/quack/quack.gohtml"),
 		ProfileView: views.NewView("views/quack/profile.gohtml",
 			"views/quack/quack.gohtml",
 			"views/follow/follow.gohtml",
 			"views/follow/unfollow.gohtml"),
-		QuackView:   views.NewView("views/quack/quackpage.gohtml"),
-		HashtagView: views.NewView("views/hashtag/hashtag.gohtml", "views/quack/quack.gohtml"),
-		qs:          qs,
-		us:          us,
-		fs:          fs,
-		hs:          hs,
+		QuackView: views.NewView("views/quack/quackpage.gohtml"),
+		TagView:   views.NewView("views/tag/tag.gohtml", "views/quack/quack.gohtml"),
+		qs:        qs,
+		us:        us,
+		fs:        fs,
+		hs:        hs,
 	}
 
 	return &qc
@@ -123,16 +123,16 @@ func (qc *QuackController) NewQuack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hashtagStrings := qc.hs.ParseHashtags(quack.Text)
-	for _, hashtagString := range hashtagStrings {
-		hashtag := models.Hashtag{
-			Text:    hashtagString,
+	tagStrings := qc.hs.ParseTags(quack.Text)
+	for _, tagString := range tagStrings {
+		tag := models.Tag{
+			Text:    tagString,
 			QuackID: quack.ID,
 		}
 
-		err = qc.hs.Create(&hashtag)
+		err = qc.hs.Create(&tag)
 		if err != nil {
-			log.Println("Failed to create a hashtag.")
+			log.Println("Failed to create a tag.")
 			// unfortunate, but let's keep going
 		}
 	}
@@ -284,21 +284,21 @@ func (qc *QuackController) DeleteQuack(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/home", http.StatusFound)
 }
 
-// ShowQuacksByHashtag handles GET /hashtags/{hashtag}
-func (qc *QuackController) ShowQuacksByHashtag(w http.ResponseWriter, r *http.Request) {
+// ShowQuacksByTag handles GET /tags/{tag}
+func (qc *QuackController) ShowQuacksByTag(w http.ResponseWriter, r *http.Request) {
 	var d views.Data
 	vars := mux.Vars(r)
 
 	loggedUser := context.GetUser(r.Context())
 	d.User = loggedUser
 
-	hashtag := vars["hashtag"]
-	// TODO verify that hashtag is proper
+	tag := vars["tag"]
+	// TODO verify that tag is proper
 
-	quacks, err := qc.qs.FindByHashtag(hashtag)
+	quacks, err := qc.qs.FindByTag(tag)
 	if err != nil {
 		d.SetAlert(err)
-		qc.HashtagView.Render(w, r, d)
+		qc.TagView.Render(w, r, d)
 		return
 	}
 
@@ -313,7 +313,7 @@ func (qc *QuackController) ShowQuacksByHashtag(w http.ResponseWriter, r *http.Re
 		Quacks: vQuacks,
 	}
 
-	qc.HashtagView.Render(w, r, d)
+	qc.TagView.Render(w, r, d)
 }
 
 // ParseQuackText parses quackText and wraps #tags and @ats into template.HTML

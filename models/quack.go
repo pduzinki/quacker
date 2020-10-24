@@ -17,7 +17,7 @@ type QuackDB interface {
 	FindByID(id uint) (*Quack, error)
 	FindByUserID(id uint) ([]Quack, error)
 	FindByMultipleUserIDs(ids []uint) ([]Quack, error)
-	FindByHashtag(hashtag string) ([]Quack, error)
+	FindByTag(tag string) ([]Quack, error)
 	// TODO perhaps add later: FindByUserIDWithLimit(id, limit, offset uint) ([]Quack, error)
 
 	Create(quack *Quack) error
@@ -95,8 +95,8 @@ func (qv *quackValidator) FindByMultipleUserIDs(ids []uint) ([]Quack, error) {
 	return qv.QuackDB.FindByMultipleUserIDs(ids)
 }
 
-func (qv *quackValidator) FindByHashtag(hashtag string) ([]Quack, error) {
-	return qv.QuackDB.FindByHashtag(hashtag)
+func (qv *quackValidator) FindByTag(tag string) ([]Quack, error) {
+	return qv.QuackDB.FindByTag(tag)
 }
 
 func (qv *quackValidator) Create(quack *Quack) error {
@@ -180,14 +180,14 @@ func (qg *quackGorm) FindByMultipleUserIDs(ids []uint) ([]Quack, error) {
 	return q, nil
 }
 
-func (qg *quackGorm) FindByHashtag(hashtag string) ([]Quack, error) {
+func (qg *quackGorm) FindByTag(tag string) ([]Quack, error) {
 	q := make([]Quack, 1)
 
 	err := qg.db.Model(Quack{}).
 		Select("quacks.id, quacks.created_at, quacks.text, users.username").
 		Joins("inner join users on quacks.user_id = users.id").
-		Joins("inner join hashtags on hashtags.quack_id = quacks.id").
-		Where("hashtags.text = (?)", hashtag).
+		Joins("inner join tags on tags.quack_id = quacks.id").
+		Where("tags.text = (?)", tag).
 		Order("id desc").
 		Find(&q).Error
 	if err != nil {

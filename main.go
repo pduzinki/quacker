@@ -51,7 +51,7 @@ func main() {
 	r.HandleFunc("/home", userRequireMw.ApplyFn(quackC.NewQuack)).Methods("POST")
 	r.HandleFunc("/cookietest", userC.CookieTest).Methods("GET")
 
-	r.HandleFunc("/hashtags/{hashtag:[a-zA-Z0-9_]+}", quackC.ShowQuacksByHashtag).Methods("GET")
+	r.HandleFunc("/tags/{tag:[a-zA-Z0-9_]+}", quackC.ShowQuacksByTag).Methods("GET")
 
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}/follow", userRequireMw.ApplyFn(followC.FollowUser)).Methods("POST")
 	r.HandleFunc("/{user:[a-zA-Z0-9_-]+}/unfollow", userRequireMw.ApplyFn(followC.UnfollowUser)).Methods("POST")
