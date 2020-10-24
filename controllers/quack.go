@@ -17,6 +17,7 @@ type QuackController struct {
 	HomeView    *views.View
 	ProfileView *views.View
 	QuackView   *views.View
+	HashtagView *views.View
 	qs          models.QuackService
 	us          models.UserService
 	fs          models.FollowService
@@ -32,11 +33,12 @@ func NewQuackController(qs models.QuackService, us models.UserService,
 			"views/quack/quack.gohtml",
 			"views/follow/follow.gohtml",
 			"views/follow/unfollow.gohtml"),
-		QuackView: views.NewView("views/quack/quackpage.gohtml"),
-		qs:        qs,
-		us:        us,
-		fs:        fs,
-		hs:        hs,
+		QuackView:   views.NewView("views/quack/quackpage.gohtml"),
+		HashtagView: views.NewView("views/hashtag/hashtag.gohtml", "views/quack/quack.gohtml"),
+		qs:          qs,
+		us:          us,
+		fs:          fs,
+		hs:          hs,
 	}
 
 	return &qc
@@ -280,6 +282,38 @@ func (qc *QuackController) DeleteQuack(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/home", http.StatusFound)
+}
+
+// ShowQuacksByHashtag handles GET /hashtags/{hashtag}
+func (qc *QuackController) ShowQuacksByHashtag(w http.ResponseWriter, r *http.Request) {
+	var d views.Data
+	vars := mux.Vars(r)
+
+	loggedUser := context.GetUser(r.Context())
+	d.User = loggedUser
+
+	hashtag := vars["hashtag"]
+	// TODO verify that hashtag is proper
+
+	quacks, err := qc.qs.FindByHashtag(hashtag)
+	if err != nil {
+		d.SetAlert(err)
+		qc.HashtagView.Render(w, r, d)
+		return
+	}
+
+	vQuacks := make([]views.Quack, len(quacks), len(quacks))
+	for i, q := range quacks {
+		vQuacks[i].Quack = q
+		vQuacks[i].QuackTextParts = ParseQuackText(q.Text)
+		vQuacks[i].BelongsToLoggedUser = (loggedUser != nil) && (loggedUser.Username == q.Username)
+	}
+
+	d.Yield = views.Profile{
+		Quacks: vQuacks,
+	}
+
+	qc.HashtagView.Render(w, r, d)
 }
 
 // ParseQuackText parses quackText and wraps #tags and @ats into template.HTML
