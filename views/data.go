@@ -16,6 +16,7 @@ type Alert struct {
 // Quack represents data needed for rendering quacks
 type Quack struct {
 	models.Quack
+	QuackTextParts      []interface{}
 	BelongsToLoggedUser bool
 }
 

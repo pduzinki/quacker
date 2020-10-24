@@ -4,7 +4,11 @@
             <p>
             ----------------------------------------------------------------<br>
             <a href="/{{.Yield.Username}}">{{.Yield.Username}}</a> {{.Yield.CreatedAt}}<br>
-            {{.Yield.Text}}<br>
+            {{range .Yield.QuackTextParts}}
+                {{.}}
+            {{end}}
+            <br>
+
             {{if .Yield.BelongsToLoggedUser}}
                 {{template "deleteQuack" .}}
             {{end}}

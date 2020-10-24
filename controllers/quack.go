@@ -79,6 +79,7 @@ func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
 	vQuacks := make([]views.Quack, len(quacks), len(quacks))
 	for i, q := range quacks {
 		vQuacks[i].Quack = q
+		vQuacks[i].QuackTextParts = ParseQuackText(q.Text)
 		vQuacks[i].BelongsToLoggedUser = (loggedUser.Username == q.Username)
 	}
 
@@ -186,6 +187,7 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 	vQuacks := make([]views.Quack, len(quacks), len(quacks))
 	for i, q := range quacks {
 		vQuacks[i].Quack = q
+		vQuacks[i].QuackTextParts = ParseQuackText(q.Text)
 		vQuacks[i].BelongsToLoggedUser = (loggedUser != nil) && (loggedUser.Username == q.Username)
 	}
 
@@ -234,6 +236,7 @@ func (qc *QuackController) GetQuack(w http.ResponseWriter, r *http.Request) {
 
 	vQuack := views.Quack{
 		Quack:               *quack,
+		QuackTextParts:      ParseQuackText(quack.Text),
 		BelongsToLoggedUser: (loggedUser.ID == quack.UserID),
 	}
 
@@ -277,4 +280,12 @@ func (qc *QuackController) DeleteQuack(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/home", http.StatusFound)
+}
+
+// ParseQuackText parses quackText and wraps #tags and @ats into template.HTML
+func /*(qc *QuackController)*/ ParseQuackText(quackText string) []interface{} {
+	quackTextParts := make([]interface{}, 0)
+	// TODO implement parsing, for now just insert whole quack text
+	quackTextParts = append(quackTextParts, quackText)
+	return quackTextParts
 }

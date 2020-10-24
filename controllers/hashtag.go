@@ -48,6 +48,7 @@ func (hc *HashtagC) ShowQuacksByHashtag(w http.ResponseWriter, r *http.Request) 
 	vQuacks := make([]views.Quack, len(quacks), len(quacks))
 	for i, q := range quacks {
 		vQuacks[i].Quack = q
+		vQuacks[i].QuackTextParts = ParseQuackText(q.Text)
 		vQuacks[i].BelongsToLoggedUser = (loggedUser != nil) && (loggedUser.Username == q.Username)
 	}
 
