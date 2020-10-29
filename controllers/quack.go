@@ -334,9 +334,8 @@ func (qc *QuackController) ParseQuackText(quackText string) []interface{} {
 	words := strings.Split(quackText, " ")
 
 	for _, word := range words {
-		// if qc.tagRegex.MatchString(word) {
-		if match := qc.tagRegex.FindString(word); match != "" {
-			word = truncate.WithoutFirstRune(match)
+		if qc.tagRegex.MatchString(word) {
+			word = truncate.WithoutFirstRune(word)
 			link := fmt.Sprintf(`<a href="/tags/%v">#%v</a>`, word, word)
 			quackTextParts = append(quackTextParts, template.HTML(link))
 		} else if qc.atRegex.MatchString(word) {
