@@ -41,6 +41,11 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 	switch d := data.(type) {
 	case Data:
 		vd = d
+		// switch dd := data.(vd.Yield) {
+		// case Profile:
+		// Parsequacks
+		// default:
+		// }
 	default:
 		vd = Data{
 			Yield: data,

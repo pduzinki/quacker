@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"quacker/hash"
+	"quacker/match"
 )
 
 // User represents user data in the database
@@ -87,8 +88,8 @@ type userValidator struct {
 func newUserValidator(u UserDB, passwordPepper, hmacKey string) *userValidator {
 	return &userValidator{
 		UserDB:         u,
-		EmailRegex:     regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,16}$`),
-		UsernameRegex:  regexp.MustCompile(`^[a-zA-Z0-9_-]+`),
+		EmailRegex:     regexp.MustCompile(match.Email()),
+		UsernameRegex:  regexp.MustCompile(match.Username()),
 		PasswordPepper: passwordPepper,
 		Hmac:           hash.NewHmac(hmacKey),
 	}

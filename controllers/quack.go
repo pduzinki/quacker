@@ -1,14 +1,20 @@
 package controllers
 
 import (
+	"fmt"
+	"html/template"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 
 	"quacker/context"
+	"quacker/match"
 	"quacker/models"
+	"quacker/truncate"
 	"quacker/views"
 )
 
@@ -22,6 +28,8 @@ type QuackController struct {
 	us          models.UserService
 	fs          models.FollowService
 	hs          models.TagService
+	tagRegex    *regexp.Regexp
+	atRegex     *regexp.Regexp
 }
 
 // NewQuackController creates new quack controller
@@ -39,6 +47,8 @@ func NewQuackController(qs models.QuackService, us models.UserService,
 		us:        us,
 		fs:        fs,
 		hs:        hs,
+		tagRegex:  regexp.MustCompile(match.Tag()),
+		atRegex:   regexp.MustCompile(match.At()),
 	}
 
 	return &qc
@@ -81,7 +91,7 @@ func (qc *QuackController) GetHome(w http.ResponseWriter, r *http.Request) {
 	vQuacks := make([]views.Quack, len(quacks), len(quacks))
 	for i, q := range quacks {
 		vQuacks[i].Quack = q
-		vQuacks[i].QuackTextParts = ParseQuackText(q.Text)
+		vQuacks[i].QuackTextParts = qc.ParseQuackText(q.Text)
 		vQuacks[i].BelongsToLoggedUser = (loggedUser.Username == q.Username)
 	}
 
@@ -189,7 +199,7 @@ func (qc *QuackController) GetProfile(w http.ResponseWriter, r *http.Request) {
 	vQuacks := make([]views.Quack, len(quacks), len(quacks))
 	for i, q := range quacks {
 		vQuacks[i].Quack = q
-		vQuacks[i].QuackTextParts = ParseQuackText(q.Text)
+		vQuacks[i].QuackTextParts = qc.ParseQuackText(q.Text)
 		vQuacks[i].BelongsToLoggedUser = (loggedUser != nil) && (loggedUser.Username == q.Username)
 	}
 
@@ -238,7 +248,7 @@ func (qc *QuackController) GetQuack(w http.ResponseWriter, r *http.Request) {
 
 	vQuack := views.Quack{
 		Quack:               *quack,
-		QuackTextParts:      ParseQuackText(quack.Text),
+		QuackTextParts:      qc.ParseQuackText(quack.Text),
 		BelongsToLoggedUser: (loggedUser.ID == quack.UserID),
 	}
 
@@ -280,6 +290,7 @@ func (qc *QuackController) DeleteQuack(w http.ResponseWriter, r *http.Request) {
 		}
 		views.RedirectWithAlert(w, r, "/home", http.StatusFound, alert)
 	}
+	// TODO delete entries from tags table
 
 	http.Redirect(w, r, "/home", http.StatusFound)
 }
@@ -305,7 +316,7 @@ func (qc *QuackController) ShowQuacksByTag(w http.ResponseWriter, r *http.Reques
 	vQuacks := make([]views.Quack, len(quacks), len(quacks))
 	for i, q := range quacks {
 		vQuacks[i].Quack = q
-		vQuacks[i].QuackTextParts = ParseQuackText(q.Text)
+		vQuacks[i].QuackTextParts = qc.ParseQuackText(q.Text)
 		vQuacks[i].BelongsToLoggedUser = (loggedUser != nil) && (loggedUser.Username == q.Username)
 	}
 
@@ -317,9 +328,25 @@ func (qc *QuackController) ShowQuacksByTag(w http.ResponseWriter, r *http.Reques
 }
 
 // ParseQuackText parses quackText and wraps #tags and @ats into template.HTML
-func /*(qc *QuackController)*/ ParseQuackText(quackText string) []interface{} {
+func (qc *QuackController) ParseQuackText(quackText string) []interface{} {
+	// TODO this feels like it should be a part of views package instead
 	quackTextParts := make([]interface{}, 0)
-	// TODO implement parsing, for now just insert whole quack text
-	quackTextParts = append(quackTextParts, quackText)
+	words := strings.Split(quackText, " ")
+
+	for _, word := range words {
+		// if qc.tagRegex.MatchString(word) {
+		if match := qc.tagRegex.FindString(word); match != "" {
+			word = truncate.WithoutFirstRune(match)
+			link := fmt.Sprintf(`<a href="/tags/%v">#%v</a>`, word, word)
+			quackTextParts = append(quackTextParts, template.HTML(link))
+		} else if qc.atRegex.MatchString(word) {
+			word = truncate.WithoutFirstRune(word)
+			link := fmt.Sprintf(`<a href="/%v">@%v</a>`, word, word)
+			quackTextParts = append(quackTextParts, template.HTML(link))
+		} else {
+			quackTextParts = append(quackTextParts, word)
+		}
+	}
+
 	return quackTextParts
 }

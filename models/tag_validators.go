@@ -1,7 +1,7 @@
 package models
 
 import (
-	"unicode/utf8"
+	"quacker/truncate"
 )
 
 type tagValidatorFunc func(*Tag) error
@@ -36,7 +36,6 @@ func (hv *tagValidator) quackExists(tag *Tag) error {
 }
 
 func (hv *tagValidator) truncateHash(tag *Tag) error {
-	_, i := utf8.DecodeRuneInString(tag.Text)
-	tag.Text = tag.Text[i:]
+	tag.Text = truncate.WithoutFirstRune(tag.Text)
 	return nil
 }

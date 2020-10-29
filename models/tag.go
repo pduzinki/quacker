@@ -2,8 +2,11 @@ package models
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/jinzhu/gorm"
+
+	"quacker/match"
 )
 
 // Tag represents tag data in the database
@@ -31,9 +34,17 @@ type tagService struct {
 }
 
 func (hs tagService) ParseTags(text string) []string {
-	tags := hs.tagRegex.FindAllString(text, -1)
 	uniqueTags := make([]string, 0)
 	keys := make(map[string]bool)
+	tags := make([]string, 0)
+
+	words := strings.Split(text, " ")
+
+	for _, word := range words {
+		if match := hs.tagRegex.FindString(word); match != "" {
+			tags = append(tags, match)
+		}
+	}
 
 	for _, tag := range tags {
 		if _, prs := keys[tag]; !prs {
@@ -52,7 +63,7 @@ func NewTagService(db *gorm.DB) TagService {
 
 	return tagService{
 		TagDB:    hv,
-		tagRegex: regexp.MustCompile(`#[a-zA-Z0-9_]+`),
+		tagRegex: regexp.MustCompile(match.Tag()),
 	}
 }
 
