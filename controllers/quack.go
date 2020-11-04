@@ -1,20 +1,16 @@
 package controllers
 
 import (
-	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/mux"
 
 	"quacker/context"
 	"quacker/match"
 	"quacker/models"
-	"quacker/truncate"
 	"quacker/views"
 )
 
@@ -330,22 +326,24 @@ func (qc *QuackController) ShowQuacksByTag(w http.ResponseWriter, r *http.Reques
 // ParseQuackText parses quackText and wraps #tags and @ats into template.HTML
 func (qc *QuackController) ParseQuackText(quackText string) []interface{} {
 	// TODO this feels like it should be a part of views package instead
+
 	quackTextParts := make([]interface{}, 0)
-	words := strings.Split(quackText, " ")
+	// words := strings.Split(quackText, " ")
 
-	for _, word := range words {
-		if qc.tagRegex.MatchString(word) {
-			word = truncate.WithoutFirstRune(word)
-			link := fmt.Sprintf(`<a href="/tags/%v">#%v</a>`, word, word)
-			quackTextParts = append(quackTextParts, template.HTML(link))
-		} else if qc.atRegex.MatchString(word) {
-			word = truncate.WithoutFirstRune(word)
-			link := fmt.Sprintf(`<a href="/%v">@%v</a>`, word, word)
-			quackTextParts = append(quackTextParts, template.HTML(link))
-		} else {
-			quackTextParts = append(quackTextParts, word)
-		}
-	}
+	// for _, word := range words {
+	// 	if qc.tagRegex.MatchString(word) {
+	// 		word = truncate.WithoutFirstRune(word)
+	// 		link := fmt.Sprintf(`<a href="/tags/%v">#%v</a>`, word, word)
+	// 		quackTextParts = append(quackTextParts, template.HTML(link))
+	// 	} else if qc.atRegex.MatchString(word) {
+	// 		word = truncate.WithoutFirstRune(word)
+	// 		link := fmt.Sprintf(`<a href="/%v">@%v</a>`, word, word)
+	// 		quackTextParts = append(quackTextParts, template.HTML(link))
+	// 	} else {
+	// 		quackTextParts = append(quackTextParts, word)
+	// 	}
+	// }
 
+	quackTextParts = append(quackTextParts, quackText) // temporarily disable parsing
 	return quackTextParts
 }

@@ -11,11 +11,7 @@ how quack should look like:
         <p>
         ----------------------------------------------------------------<br>
         <a href="/{{.Username}}">{{.Username}}</a> {{.CreatedAt}}<br>
-        {{range .QuackTextParts}}
-            {{.}}
-        {{end}}
-        <br>
-
+        <div class="quackText">{{range .QuackTextParts}}{{.}}{{end}}</div><br>
         <a href="/{{.Username}}/quack/{{.ID}}">view more</a><br>
         {{if .BelongsToLoggedUser}}
             {{template "deleteQuack" .}}

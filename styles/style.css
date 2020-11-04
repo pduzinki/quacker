@@ -6,3 +6,8 @@ body {
 footer {
     font-size: 12px;
 }
+
+.quackText {
+    /* font-size: 16px; */
+    white-space: pre;
+}
