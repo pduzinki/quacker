@@ -7,10 +7,10 @@ a learning exercise for me, and hopefully for you as well. New features and impr
 * PostgreSQL v10.14 (or higher)
 
 ## Additional packages:
-* GORM v1 (https://v1.gorm.io/)
-* gorilla/mux (https://github.com/gorilla/mux)
-* gorilla/schema (https://github.com/gorilla/schema)
-* bcrypt (golang.org/x/crypto/bcrypt)
+To install additional packages needed, just run:
+```sh
+go get github.com/gorilla/mux github.com/gorilla/schema github.com/jinzhu/gorm github.com/lib/pq golang.org/x/crypto/bcrypt
+```
 
 ## Setup:
 Before running the app for the first time, you need to create database in PostgreSQL. Login to Postgres and type:
