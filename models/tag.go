@@ -2,7 +2,6 @@ package models
 
 import (
 	"regexp"
-	"strings"
 
 	"github.com/jinzhu/gorm"
 
@@ -36,15 +35,7 @@ type tagService struct {
 func (hs tagService) ParseTags(text string) []string {
 	uniqueTags := make([]string, 0)
 	keys := make(map[string]bool)
-	tags := make([]string, 0)
-
-	words := strings.Split(text, " ")
-
-	for _, word := range words {
-		if match := hs.tagRegex.FindString(word); match != "" {
-			tags = append(tags, match)
-		}
-	}
+	tags := hs.tagRegex.FindAllString(text, -1)
 
 	for _, tag := range tags {
 		if _, prs := keys[tag]; !prs {

@@ -15,10 +15,10 @@ func Email() string {
 
 // Tag returns raw string representing regex pattern to match tags (e.g. "#hashtag")
 func Tag() string {
-	return `^#[a-zA-Z0-9_]+$`
+	return `#[a-zA-Z0-9_]+`
 }
 
 // At returns raw string representing regex pattern to match ats (e.g. "@user")
 func At() string {
-	return `^@[a-zA-Z0-9_-]+$`
+	return `@[a-zA-Z0-9_-]+`
 }

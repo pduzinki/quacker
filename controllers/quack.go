@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"regexp"
@@ -11,6 +13,7 @@ import (
 	"quacker/context"
 	"quacker/match"
 	"quacker/models"
+	"quacker/truncate"
 	"quacker/views"
 )
 
@@ -324,26 +327,44 @@ func (qc *QuackController) ShowQuacksByTag(w http.ResponseWriter, r *http.Reques
 }
 
 // ParseQuackText parses quackText and wraps #tags and @ats into template.HTML
+// TODO this feels like it should be a part of views package instead
 func (qc *QuackController) ParseQuackText(quackText string) []interface{} {
-	// TODO this feels like it should be a part of views package instead
-
 	quackTextParts := make([]interface{}, 0)
-	// words := strings.Split(quackText, " ")
+	ignore := -1
 
-	// for _, word := range words {
-	// 	if qc.tagRegex.MatchString(word) {
-	// 		word = truncate.WithoutFirstRune(word)
-	// 		link := fmt.Sprintf(`<a href="/tags/%v">#%v</a>`, word, word)
-	// 		quackTextParts = append(quackTextParts, template.HTML(link))
-	// 	} else if qc.atRegex.MatchString(word) {
-	// 		word = truncate.WithoutFirstRune(word)
-	// 		link := fmt.Sprintf(`<a href="/%v">@%v</a>`, word, word)
-	// 		quackTextParts = append(quackTextParts, template.HTML(link))
-	// 	} else {
-	// 		quackTextParts = append(quackTextParts, word)
-	// 	}
-	// }
+	for i, r := range quackText {
+		if i < ignore {
+			// ignore runes of a regex match
+			continue
+		} else if r == '#' {
+			// try to match tag
+			match := qc.tagRegex.FindStringIndex(quackText[i:])
+			if match != nil && match[0] == 0 {
+				tag := quackText[i+match[0] : i+match[1]]
+				tag = truncate.WithoutFirstRune(tag)
+				link := fmt.Sprintf(`<a href="/tags/%v">#%v</a>`, tag, tag)
+				quackTextParts = append(quackTextParts, template.HTML(link))
+				ignore = i + match[1]
+			} else {
+				quackTextParts = append(quackTextParts, string(r))
+			}
+		} else if r == '@' {
+			// try to match at
+			match := qc.atRegex.FindStringIndex(quackText[i:])
+			if match != nil && match[0] == 0 {
+				at := quackText[i+match[0] : i+match[1]]
+				at = truncate.WithoutFirstRune(at)
+				link := fmt.Sprintf(`<a href="/%v">@%v</a>`, at, at)
+				quackTextParts = append(quackTextParts, template.HTML(link))
+				ignore = i + match[1]
+			} else {
+				quackTextParts = append(quackTextParts, string(r))
+			}
+		} else {
+			// append to quack parts
+			quackTextParts = append(quackTextParts, string(r))
+		}
+	}
 
-	quackTextParts = append(quackTextParts, quackText) // temporarily disable parsing
 	return quackTextParts
 }
